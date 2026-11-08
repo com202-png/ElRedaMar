@@ -219,16 +219,72 @@ window.delItem = async (key, id) => {
   toast('تم الحذف'); loadAll();
 };
 
+/* ── صورة الحلاق: اختيار من الجهاز، قص مربع، تصغير، رفع ── */
+let uploading = false;
+function photoField(url) {
+  return `<div class="fg"><label>الصورة</label>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="avatar" id="phPrev" style="margin:0;width:64px;height:64px">${url ? `<img src="${esc(url)}" alt=""/>` : '—'}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+        <button type="button" class="btn btn-line btn-sm" id="phPick">اختيار صورة</button>
+        <button type="button" class="btn btn-red btn-sm" id="phDel" ${url ? '' : 'style="display:none"'}>إزالة الصورة</button>
+        <span class="mut" id="phMsg"></span>
+      </div>
+      <input type="file" id="phFile" accept="image/*" hidden/>
+    </div>
+    <input type="hidden" data-k="photo_url" value="${esc(url || '')}"/></div>`;
+}
+async function resizeToBlob(file, size = 480) {
+  const img = await new Promise((res, rej) => {
+    const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file);
+  });
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const m = Math.min(img.width, img.height);
+  c.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, size, size);
+  URL.revokeObjectURL(img.src);
+  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.85));
+}
+function wirePhoto() {
+  const file = $('phFile'); if (!file) return;
+  const hidden = document.querySelector('#itemFields [data-k="photo_url"]');
+  const setUrl = u => {
+    hidden.value = u || '';
+    $('phPrev').innerHTML = u ? `<img src="${esc(u)}" alt=""/>` : '—';
+    $('phDel').style.display = u ? '' : 'none';
+  };
+  $('phPick').onclick = () => file.click();
+  $('phDel').onclick = () => setUrl('');
+  file.onchange = async () => {
+    const f = file.files[0]; if (!f) return;
+    uploading = true; $('phMsg').textContent = 'جاري رفع الصورة...';
+    try {
+      const blob = await resizeToBlob(f);
+      const path = `${Date.now()}.jpg`;
+      const { error } = await sb.storage.from('barbers').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+      if (error) throw error;
+      setUrl(sb.storage.from('barbers').getPublicUrl(path).data.publicUrl);
+      $('phMsg').textContent = '';
+    } catch (e) {
+      console.error('upload error', e);
+      $('phMsg').textContent = '';
+      toast('تعذر رفع الصورة، حاول بصورة أخرى', 'err', 4500);
+    }
+    uploading = false; file.value = '';
+  };
+}
+
 let editing = null;
 window.editItem = (key, id) => {
   const cfg = CFG[key], row = id ? DATA()[key].find(r => r.id === id) : null;
   editing = { key, id };
   $('itemTitle').textContent = (row ? 'تعديل ' : 'إضافة ') + cfg.label;
-  $('itemFields').innerHTML = cfg.fields.map(([k, l, t, req]) =>
+  $('itemFields').innerHTML = cfg.fields.map(([k, l, t, req]) => k === 'photo_url' ? photoField(row ? row.photo_url : '') :
     `<div class="fg"><label>${l}${req ? ' *' : ''}</label><input data-k="${k}" type="${t}" ${t === 'number' ? 'min="0" step="any"' : ''} value="${esc(row ? row[k] ?? '' : (k === 'sort' ? 0 : ''))}"/></div>`).join('');
+  wirePhoto();
   openMo('moItem');
 };
 $('btnSaveItem').addEventListener('click', async () => {
+  if (uploading) { toast('انتظر اكتمال رفع الصورة', 'err'); return; }
   const { key, id } = editing, cfg = CFG[key], payload = {};
   for (const [k, l, t, req] of cfg.fields) {
     const raw = document.querySelector(`#itemFields [data-k="${k}"]`).value.trim();
