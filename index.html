@@ -3,154 +3,146 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="description" content="احجز دورك عند الحلاق أونلاين وتابع قائمة الانتظار"/>
-<title>احجز عند الحلاق | Barber Shop</title>
+<meta name="description" content="حجز مواعيد الحلاقة ومتابعة قائمة الانتظار"/>
+<title>حجز موعد | Barber Shop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
-/* BARBER BOOKING — dark theme with light accents */
 :root{
   color-scheme:dark;
-  --bg:#0b0b0d;--bg2:#111114;--card:#16161a;--card2:#1d1d22;
-  --ink:#f5f2eb;--ink2:#c8c3b7;--ink3:#8b867b;
-  --paper:#f5f2eb;--paper-ink:#141210;
-  --gold:#c9a24b;--gold-l:#e6c67a;--gold-d:#a8832f;
-  --line:rgba(255,255,255,.09);--line-g:rgba(230,198,122,.38);
-  --green:#4cc38a;--red:#ef6a5b;--blue:#6aa8ff;
-  --r:16px;--r-lg:22px;--pill:999px;
-  --sh:0 8px 30px rgba(0,0,0,.35);--sh-h:0 18px 50px rgba(0,0,0,.5);
-  --tr:.2s cubic-bezier(.4,0,.2,1);
+  --bg:#121212;--bg2:#181818;--card:#1c1c1c;--card2:#222;
+  --ink:#ececec;--ink2:#bdbdbd;--ink3:#8c8c8c;
+  --paper:#f2f2f2;--paper-ink:#151515;
+  --gold:#d4a53a;--gold-l:#d4a53a;--gold-d:#b98a22;
+  --line:#2c2c2c;--line-g:#4a4a4a;
+  --green:#4caf7d;--red:#e5604f;--blue:#6ea8fe;
+  --r:8px;--r-lg:8px;--pill:6px;
   font-family:'Tajawal',system-ui,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font-family:inherit}
+body{background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;font-size:15px}
+button,input,select,textarea{font-family:inherit;font-size:inherit}
 input::placeholder,textarea::placeholder{color:var(--ink3)}
-.mut{font-size:.76rem;color:var(--ink3)}
+.mut{font-size:.8rem;color:var(--ink3)}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 22px;border-radius:var(--pill);border:none;font-size:.9rem;font-weight:700;cursor:pointer;transition:all var(--tr);text-decoration:none;white-space:nowrap}
-.btn-gold{background:linear-gradient(135deg,var(--gold-l),var(--gold-d));color:#17130a;box-shadow:0 8px 22px rgba(201,162,75,.25)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,162,75,.35)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:6px;border:1px solid transparent;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn-gold{background:var(--gold);color:#1a1405}
+.btn-gold:hover{background:#e0b24a}
 .btn-dark{background:var(--paper);color:var(--paper-ink)}
 .btn-dark:hover{background:#fff}
-.btn-line{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
-.btn-line:hover{border-color:var(--gold-l);background:rgba(230,198,122,.07)}
-.btn-red{background:rgba(239,106,91,.14);color:var(--red)}
-.btn-red:hover{background:rgba(239,106,91,.22)}
-.btn-green{background:rgba(76,195,138,.14);color:var(--green)}
-.btn-green:hover{background:rgba(76,195,138,.22)}
-.btn-sm{padding:6px 13px;font-size:.78rem}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none}
+.btn-line{background:transparent;border-color:var(--line-g);color:var(--ink)}
+.btn-line:hover{background:#242424}
+.btn-red{background:transparent;border-color:#5a2a25;color:var(--red)}
+.btn-red:hover{background:#2a1815}
+.btn-green{background:transparent;border-color:#285a41;color:var(--green)}
+.btn-green:hover{background:#15271e}
+.btn-sm{padding:5px 11px;font-size:.8rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 
 /* header */
-.top{position:sticky;top:0;z-index:100;background:rgba(11,11,13,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-.top-in{max-width:1100px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.05rem;letter-spacing:.01em}
-.logo-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--gold-l),var(--gold-d));color:#17130a;display:grid;place-items:center;font-size:1.15rem}
+.top{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--line)}
+.top-in{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-weight:700;font-size:1.05rem}
+.logo-mark{display:none}
 
 /* hero */
-.hero{background:radial-gradient(ellipse 70% 120% at 50% -20%,rgba(201,162,75,.2),transparent 65%),var(--bg2);color:var(--ink);text-align:center;padding:56px 20px 60px;border-bottom:1px solid var(--line)}
-.hero h1{font-size:clamp(1.8rem,4.6vw,2.8rem);font-weight:800;line-height:1.25;margin-bottom:12px}
-.hero h1 em{color:var(--gold-l);font-style:normal}
-.hero p{color:var(--ink2);max-width:520px;margin:0 auto;line-height:1.8}
-.closed-banner{display:none;background:#b3382b;color:#fff;text-align:center;padding:10px;font-weight:700;font-size:.9rem}
+.hero{background:var(--bg2);border-bottom:1px solid var(--line);padding:32px max(20px,calc((100% - 1100px)/2)) 30px;text-align:start}
+.hero h1{font-size:1.7rem;font-weight:700;margin-bottom:6px}
+.hero p{color:var(--ink2);max-width:560px}
+.closed-banner{display:none;background:#8f2f24;color:#fff;text-align:center;padding:9px;font-size:.9rem}
 
 /* steps */
-.wrap{max-width:1100px;margin:0 auto;padding:8px 20px 150px}
-.step{margin-top:38px}
-.step h2{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:800;margin-bottom:16px}
-.num{width:30px;height:30px;border-radius:50%;background:var(--paper);color:var(--paper-ink);font-size:.85rem;font-weight:800;display:grid;place-items:center}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:4px 20px 130px}
+.step{margin-top:30px}
+.step h2{font-size:1.1rem;font-weight:700;margin-bottom:12px}
+.num{color:var(--ink3);margin-inline-end:4px}
+.num::after{content:'.'}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 
-.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:16px;cursor:pointer;transition:all var(--tr);position:relative;text-align:right}
-.card:hover{border-color:var(--line-g);transform:translateY(-2px);box-shadow:var(--sh)}
-.card.sel{border-color:var(--gold-l);background:var(--card2);box-shadow:0 0 0 4px rgba(230,198,122,.12)}
-.card.sel::after{content:'✓';position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;background:var(--gold-l);color:#17130a;font-size:.8rem;font-weight:800;display:grid;place-items:center}
-.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2b2b32,#1b1b20);border:1.5px solid var(--line-g);display:grid;place-items:center;font-size:1.6rem;font-weight:800;color:var(--gold-l);overflow:hidden;margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;cursor:pointer;text-align:right}
+.card:hover{border-color:#555}
+.card.sel{border-color:var(--gold);background:var(--card2);outline:1px solid var(--gold)}
+.avatar{width:48px;height:48px;border-radius:50%;background:#2a2a2a;display:grid;place-items:center;font-size:1.1rem;font-weight:700;color:var(--ink2);overflow:hidden;margin-bottom:8px}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.c-name{font-weight:800;font-size:1rem}
+.c-name{font-weight:700;font-size:.98rem}
 .c-sub{font-size:.8rem;color:var(--ink3);margin-top:2px;min-height:1.1em}
-.q-pill{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:var(--pill);font-size:.74rem;font-weight:700;background:rgba(76,195,138,.14);color:var(--green)}
-.q-pill.busy{background:rgba(230,198,122,.14);color:var(--gold-l)}
+.q-pill{display:inline-block;margin-top:8px;padding:2px 9px;border-radius:4px;font-size:.76rem;font-weight:600;background:#15271e;color:var(--green)}
+.q-pill.busy{background:#2b2412;color:var(--gold)}
 
-.tabs{display:flex;gap:8px;margin-bottom:16px}
-.tab{padding:9px 22px;border-radius:var(--pill);border:1.5px solid var(--line);background:var(--card);font-weight:700;font-size:.86rem;cursor:pointer;color:var(--ink2);transition:all var(--tr)}
-.tab:hover{border-color:var(--line-g)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{padding:7px 18px;border-radius:6px;border:1px solid var(--line-g);background:transparent;font-weight:600;font-size:.88rem;cursor:pointer;color:var(--ink2)}
 .tab.on{background:var(--paper);border-color:var(--paper);color:var(--paper-ink)}
 .svc{display:flex;flex-direction:column;gap:6px}
 .svc .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.svc .p{font-weight:800;color:var(--gold-l);white-space:nowrap}
-.svc .d{font-size:.78rem;color:var(--ink3)}
-.old{text-decoration:line-through;color:var(--ink3);font-weight:500;font-size:.8rem;margin-inline-start:6px}
-.badge-pk{display:inline-block;background:var(--paper);color:var(--paper-ink);font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:var(--pill);width:max-content}
+.svc .p{font-weight:700;color:var(--gold);white-space:nowrap}
+.svc .d{font-size:.8rem;color:var(--ink3)}
+.old{text-decoration:line-through;color:var(--ink3);font-weight:400;font-size:.8rem;margin-inline-start:6px}
+.badge-pk{display:inline-block;background:#2a2a2a;color:var(--ink2);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:4px;width:max-content}
 
 /* forms */
-.form{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.fg{display:flex;flex-direction:column;gap:6px}
+.form{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:5px}
 .fg.full{grid-column:1/-1}
-.fg label{font-size:.8rem;font-weight:700;color:var(--ink2)}
-.fg input,.fg select,.fg textarea{padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg2);font-size:.92rem;color:var(--ink);outline:none;transition:border-color var(--tr)}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold-l)}
+.fg label{font-size:.82rem;font-weight:600;color:var(--ink2)}
+.fg input,.fg select,.fg textarea{padding:9px 12px;border-radius:6px;border:1px solid var(--line-g);background:var(--bg);color:var(--ink);outline:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
 
-/* sticky book bar (light) */
-.bar{position:fixed;bottom:0;inset-inline:0;z-index:150;background:var(--paper);color:var(--paper-ink);box-shadow:0 -10px 40px rgba(0,0,0,.45)}
-.bar-in{max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+/* bottom bar */
+.bar{position:fixed;bottom:0;inset-inline:0;z-index:150;background:var(--paper);color:var(--paper-ink);border-top:1px solid #cfcfcf}
+.bar-in{max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .bar-sum{display:flex;gap:24px;flex-wrap:wrap}
-.bar-sum .k{font-size:.7rem;color:#6b655a;font-weight:600}
-.bar-sum .v{font-weight:800;font-size:1rem;color:var(--paper-ink)}
+.bar-sum .k{font-size:.72rem;color:#666}
+.bar-sum .v{font-weight:700;font-size:.98rem;color:var(--paper-ink)}
 
 /* modal */
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity var(--tr)}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none}
 .mo.open{opacity:1;pointer-events:auto}
-.mo-box{background:var(--card2);border:1px solid var(--line);border-radius:var(--r-lg);padding:26px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:var(--sh-h);transform:translateY(14px) scale(.97);transition:transform var(--tr)}
-.mo.open .mo-box{transform:none}
-.mo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.mo-head h2{font-size:1.15rem;font-weight:800}
-.mo-x{width:32px;height:32px;border:none;border-radius:9px;background:rgba(255,255,255,.08);color:var(--ink);cursor:pointer;font-size:1rem}
-.mo-x:hover{background:rgba(255,255,255,.14)}
-.mo-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.mo-box{background:var(--card2);border:1px solid var(--line-g);border-radius:8px;padding:22px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto}
+.mo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mo-head h2{font-size:1.1rem;font-weight:700}
+.mo-x{width:30px;height:30px;border:1px solid var(--line-g);border-radius:6px;background:transparent;color:var(--ink);cursor:pointer}
+.mo-x:hover{background:#2c2c2c}
+.mo-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
 
 .ticket{text-align:center}
-.ticket .ok{font-size:2.6rem}
-.ticket h3{font-size:1.25rem;font-weight:800;margin:6px 0 2px}
-.t-no{display:inline-block;margin:12px 0;padding:8px 28px;border-radius:var(--r);background:var(--paper);color:var(--paper-ink);font-size:1.7rem;font-weight:800;letter-spacing:.04em}
-.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;text-align:right}
-.t-cell{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px}
-.t-cell .k{font-size:.72rem;color:var(--ink3)}
-.t-cell .v{font-weight:800;font-size:1rem;margin-top:2px}
-.t-cell.hl{background:rgba(230,198,122,.1);border-color:var(--line-g)}
-.note{font-size:.76rem;color:var(--ink3);line-height:1.7}
+.ticket h3{font-size:1.15rem;font-weight:700;margin:2px 0}
+.t-no{display:inline-block;margin:10px 0;padding:6px 24px;border-radius:6px;background:var(--paper);color:var(--paper-ink);font-size:1.5rem;font-weight:700}
+.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;text-align:right}
+.t-cell{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px}
+.t-cell .k{font-size:.74rem;color:var(--ink3)}
+.t-cell .v{font-weight:700;font-size:.98rem;margin-top:2px}
+.t-cell.hl{border-color:var(--gold)}
+.note{font-size:.78rem;color:var(--ink3);line-height:1.7}
 
-.trk{border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px;background:var(--bg2)}
-.trk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.trk-no{font-weight:800;font-size:1.05rem}
-.st{padding:3px 11px;border-radius:var(--pill);font-size:.72rem;font-weight:700}
-.st.waiting{background:rgba(230,198,122,.15);color:var(--gold-l)}
-.st.in_service,.st.done{background:rgba(76,195,138,.15);color:var(--green)}
-.st.cancelled,.st.no_show{background:rgba(239,106,91,.15);color:var(--red)}
+.trk{border:1px solid var(--line);border-radius:6px;padding:12px;margin-top:10px;background:var(--bg)}
+.trk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.trk-no{font-weight:700}
+.st{padding:2px 9px;border-radius:4px;font-size:.74rem;font-weight:600}
+.st.waiting{background:#2b2412;color:var(--gold)}
+.st.in_service,.st.done{background:#15271e;color:var(--green)}
+.st.cancelled,.st.no_show{background:#2a1815;color:var(--red)}
 
 /* toast */
-#tc{position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center}
-.tst{padding:11px 20px;border-radius:14px;background:#2a2a31;color:var(--ink);border:1px solid var(--line);font-size:.88rem;font-weight:600;box-shadow:var(--sh-h);animation:tin .25s ease both}
-.tst.ok{background:#1f9d63;border-color:transparent;color:#fff}
-.tst.err{background:#b3382b;border-color:transparent;color:#fff}
+#tc{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none;align-items:center}
+.tst{padding:9px 16px;border-radius:6px;background:#2e2e2e;color:var(--ink);border:1px solid var(--line-g);font-size:.88rem}
+.tst.ok{background:#1d6b45;border-color:#1d6b45;color:#fff}
+.tst.err{background:#8f2f24;border-color:#8f2f24;color:#fff}
 .tst.hid{opacity:0;transition:opacity .25s}
-@keyframes tin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 
-footer{background:var(--bg2);border-top:1px solid var(--line);color:var(--ink3);text-align:center;padding:22px;font-size:.8rem}
-footer a{color:var(--gold-l);text-decoration:none}
+footer{background:var(--bg2);border-top:1px solid var(--line);color:var(--ink3);text-align:center;padding:18px;font-size:.8rem}
+footer a{color:var(--ink2);text-decoration:none}
+footer a:hover{text-decoration:underline}
 
-.empty{grid-column:1/-1;text-align:center;padding:36px;color:var(--ink3);line-height:1.8}
+.empty{grid-column:1/-1;text-align:center;padding:30px;color:var(--ink3);line-height:1.8}
 
 @media(max-width:640px){
   .form{grid-template-columns:1fr}
   .grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .bar-sum{gap:14px}
-  .bar-in{padding:10px 14px}
-  .btn-book{padding:11px 18px}
+  .bar-in{padding:8px 14px}
+  .hero h1{font-size:1.4rem}
 }
 
 </style>
@@ -160,41 +152,41 @@ footer a{color:var(--gold-l);text-decoration:none}
 
 <header class="top">
   <div class="top-in">
-    <div class="logo"><span class="logo-mark">✂</span><span id="shopName">Barber Shop</span></div>
-    <button class="btn btn-line btn-sm" id="trackBtn">📍 تابع حجزي</button>
+    <div class="logo" id="shopName">Barber Shop</div>
+    <button class="btn btn-line btn-sm" id="trackBtn">متابعة الحجز</button>
   </div>
 </header>
-<div class="closed-banner" id="closedBanner">الحجز الأونلاين متوقف مؤقتاً — تواصل معنا على واتساب</div>
+<div class="closed-banner" id="closedBanner">الحجز عبر الموقع متوقف مؤقتاً، يرجى التواصل معنا.</div>
 
 <section class="hero">
-  <h1>احجز دورك <em>من غير زحمة</em></h1>
-  <p>اختار الحلاق والخدمة، واعرف قدامك كام واحد والوقت المتوقع لدورك قبل ما تيجي.</p>
+  <h1>احجز موعدك</h1>
+  <p>اختر الحلاق والخدمة، وتابع دورك وعدد المنتظرين قبل وصولك.</p>
 </section>
 
 <main class="wrap">
   <section class="step">
-    <h2><span class="num">1</span> اختار الحلاق</h2>
-    <div class="grid" id="barbers"><div class="empty">⏳ جاري التحميل...</div></div>
+    <h2><span class="num">1</span>اختر الحلاق</h2>
+    <div class="grid" id="barbers"><div class="empty">جاري التحميل...</div></div>
   </section>
 
   <section class="step">
-    <h2><span class="num">2</span> اختار الخدمة</h2>
+    <h2><span class="num">2</span>اختر الخدمة</h2>
     <div class="tabs">
-      <button class="tab on" data-mode="services">خدمات</button>
-      <button class="tab" data-mode="packages">باكدجات 🎁</button>
+      <button class="tab on" data-mode="services">الخدمات</button>
+      <button class="tab" data-mode="packages">الباكدجات</button>
     </div>
     <div class="grid" id="services"></div>
     <div class="grid" id="packages" style="display:none"></div>
   </section>
 
   <section class="step">
-    <h2><span class="num">3</span> بياناتك</h2>
+    <h2><span class="num">3</span>بياناتك</h2>
     <div class="form">
-      <div class="fg"><label>الاسم *</label><input id="custName" placeholder="اسمك" autocomplete="name"/></div>
-      <div class="fg"><label>رقم الموبايل *</label><input id="custPhone" type="tel" inputmode="tel" placeholder="01xxxxxxxxx" autocomplete="tel"/></div>
-      <div class="fg full"><label>ملاحظات (اختياري)</label><textarea id="custNotes" rows="2" placeholder="مثلاً: فيد جانبي رقم 1..."></textarea></div>
+      <div class="fg"><label>الاسم *</label><input id="custName" autocomplete="name"/></div>
+      <div class="fg"><label>رقم الهاتف *</label><input id="custPhone" type="tel" inputmode="tel" placeholder="01xxxxxxxxx" autocomplete="tel"/></div>
+      <div class="fg full"><label>ملاحظات (اختياري)</label><textarea id="custNotes" rows="2"></textarea></div>
     </div>
-    <p class="note" style="margin-top:10px">💵 الدفع كاش في المحل بعد الخدمة.</p>
+    <p class="note" style="margin-top:8px">الدفع نقداً في المحل بعد الخدمة.</p>
   </section>
 </main>
 
@@ -204,7 +196,7 @@ footer a{color:var(--gold-l);text-decoration:none}
       <div><div class="k">المدة التقديرية</div><div class="v" id="sumDur">—</div></div>
       <div><div class="k">الإجمالي</div><div class="v" id="sumPrice">—</div></div>
     </div>
-    <button class="btn btn-gold btn-book" id="bookBtn" disabled>✂ احجز دلوقتي</button>
+    <button class="btn btn-gold btn-book" id="bookBtn" disabled>تأكيد الحجز</button>
   </div>
 </div>
 
@@ -213,20 +205,19 @@ footer a{color:var(--gold-l);text-decoration:none}
 <!-- confirmation -->
 <div class="mo" id="moDone">
   <div class="mo-box ticket">
-    <div class="ok">✅</div>
-    <h3>تم تأكيد حجزك!</h3>
+    <h3>تم تأكيد الحجز</h3>
     <div class="mut" id="dBarber"></div>
     <div class="t-no" id="dNo">#1</div>
     <div class="t-grid">
-      <div class="t-cell hl"><div class="k">قدامك</div><div class="v" id="dAhead">—</div></div>
-      <div class="t-cell hl"><div class="k">دورك تقريباً</div><div class="v" id="dTime">—</div></div>
-      <div class="t-cell"><div class="k">مدة خدمتك</div><div class="v" id="dDur">—</div></div>
+      <div class="t-cell hl"><div class="k">عدد المنتظرين قبلك</div><div class="v" id="dAhead">—</div></div>
+      <div class="t-cell hl"><div class="k">موعد دورك تقريباً</div><div class="v" id="dTime">—</div></div>
+      <div class="t-cell"><div class="k">مدة الخدمة</div><div class="v" id="dDur">—</div></div>
       <div class="t-cell"><div class="k">الإجمالي</div><div class="v" id="dPrice">—</div></div>
     </div>
-    <p class="note">الوقت تقديري وبيتغير حسب سرعة الشغل. تقدر تتابع دورك لحظة بلحظة من زر «تابع حجزي».</p>
+    <p class="note">الوقت تقديري وقد يتغير حسب سير العمل. يمكنك متابعة دورك من زر «متابعة الحجز».</p>
     <div class="mo-foot" style="justify-content:center">
-      <button class="btn btn-dark" id="dTrack">📍 تابع دوري</button>
-      <button class="btn btn-line" onclick="closeMo('moDone')">تمام</button>
+      <button class="btn btn-dark" id="dTrack">متابعة الدور</button>
+      <button class="btn btn-line" onclick="closeMo('moDone')">إغلاق</button>
     </div>
   </div>
 </div>
@@ -234,10 +225,10 @@ footer a{color:var(--gold-l);text-decoration:none}
 <!-- tracking -->
 <div class="mo" id="moTrack">
   <div class="mo-box">
-    <div class="mo-head"><h2>📍 متابعة الحجز</h2><button class="mo-x" onclick="closeMo('moTrack')">✕</button></div>
+    <div class="mo-head"><h2>متابعة الحجز</h2><button class="mo-x" onclick="closeMo('moTrack')">✕</button></div>
     <div style="display:flex;gap:8px">
-      <input id="trkPhone" type="tel" inputmode="tel" placeholder="رقم الموبايل اللي حجزت بيه" style="flex:1;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font-size:.92rem;outline:none"/>
-      <button class="btn btn-dark btn-sm" id="trkGo">اعرض</button>
+      <input id="trkPhone" type="tel" inputmode="tel" placeholder="رقم الهاتف المستخدم في الحجز" style="flex:1;padding:9px 12px;border-radius:6px;border:1px solid var(--line-g);background:var(--bg);color:var(--ink);outline:none"/>
+      <button class="btn btn-dark btn-sm" id="trkGo">عرض</button>
     </div>
     <div id="trkList"></div>
   </div>
