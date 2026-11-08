@@ -46,7 +46,8 @@ async function loadAll() {
     sb.from('settings').select('*'),
   ]);
   if (b.error || s.error) {
-    $('barbers').innerHTML = '<div class="empty">❌ تعذر تحميل البيانات. تأكد من تشغيل ملف SQL في Supabase.</div>';
+    console.error('load error', b.error || s.error);
+    $('barbers').innerHTML = '<div class="empty">⚠️ الخدمة غير متاحة حالياً.<br>يرجى المحاولة بعد قليل أو التواصل معنا مباشرة.</div>';
     return;
   }
   barbers = b.data || []; services = s.data || []; packages = p.data || [];
@@ -75,7 +76,7 @@ function renderBarbers() {
   const waits = barbers.map(b => queue[b.id] || { ahead: 0, wait_min: 0 });
   const best = waits.reduce((a, c) => c.wait_min < a.wait_min ? c : a, waits[0]);
   const pill = q => q.ahead === 0
-    ? '<span class="q-pill">فاضي دلوقتي ✅</span>'
+    ? '<span class="q-pill">متاح الآن</span>'
     : `<span class="q-pill busy">قدامك ${q.ahead} · حوالي ${dur(q.wait_min)}</span>`;
 
   const any = `<div class="card ${selBarber === 'any' ? 'sel' : ''}" onclick="pickBarber('any')">
