@@ -3,519 +3,138 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>لوحة التحكم | Shahenda Store</title>
+<title>لوحة التحكم | Barber Shop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --bg:#f5f3ef; --bg-s:#ede9e2; --white:#fff; --border:rgba(0,0,0,.08);
-  --gold:#b8860b; --gold-lt:#d4a843; --gold-dk:#8b6308;
-  --text:#1a1410; --text-2:#5c4e3a; --text-3:#9a8878;
-  --green:#2d6a4f; --red:#c0392b; --blue:#1a56a4;
-  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:24px; --r-pill:999px;
-  --sh:0 2px 16px rgba(90,60,20,.08); --sh-hov:0 8px 32px rgba(90,60,20,.14);
-  --tr:.2s cubic-bezier(.4,0,.2,1);
-  font-family:'Tajawal',system-ui,sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;-webkit-font-smoothing:antialiased}
-
-/* SIDEBAR */
-.sidebar{width:230px;flex-shrink:0;background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto}
-.sb-brand{padding:20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sb-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;display:grid;place-items:center}
-.sb-title{font-size:.9rem;font-weight:700;color:var(--text)}
-.sb-sub{font-size:.68rem;color:var(--text-3);margin-top:1px}
-.sb-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
-.nav-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-md);border:none;background:transparent;color:var(--text-2);font-family:inherit;font-size:.88rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all var(--tr);width:100%;text-align:right}
-.nav-link:hover{background:var(--bg);color:var(--text)}
-.nav-link.active{background:rgba(184,134,11,.1);color:var(--gold-dk);font-weight:700}
-.nav-icon{font-size:1rem;flex-shrink:0}
-.nav-badge{margin-right:auto;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:var(--r-pill)}
-.sb-footer{padding:10px 8px;border-top:1px solid var(--border)}
-
-/* MOBILE TOPBAR */
-.mob-top{display:none;position:fixed;top:0;inset-inline:0;z-index:200;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;align-items:center;justify-content:space-between}
-.mob-toggle{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text);width:32px;height:32px;display:grid;place-items:center;border-radius:6px}
-.mob-title{font-weight:700;font-size:.9rem}
-
-/* MAIN */
-.main{flex:1;overflow-y:auto;padding:28px 24px 60px;min-width:0}
-
-/* TABS */
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-
-/* PAGE HEADER */
-.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-.ph h1{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:var(--text)}
-.ph-sub{font-size:.83rem;color:var(--text-3);margin-top:3px}
-.ph-acts{display:flex;gap:8px;flex-wrap:wrap}
-
-/* STAT CARDS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:18px 20px;box-shadow:var(--sh);display:flex;align-items:center;gap:14px}
-.stat-icon{font-size:1.8rem;flex-shrink:0}
-.stat-label{font-size:.72rem;color:var(--text-3);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
-.stat-val{font-size:1.45rem;font-weight:700;color:var(--text);margin-top:2px}
-
-/* FILTERS */
-.filter-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
-.s-wrap{flex:1;min-width:180px;position:relative}
-.s-ic{position:absolute;top:50%;right:12px;transform:translateY(-50%);color:var(--text-3);font-size:.9rem;pointer-events:none}
-.s-wrap input{width:100%;padding:9px 36px 9px 12px;border-radius:var(--r-lg);border:1px solid var(--border);background:var(--white);font-family:inherit;font-size:.87rem;color:var(--text);outline:none;transition:border-color var(--tr)}
-.s-wrap input:focus{border-color:var(--gold)}
-.s-wrap input::placeholder{color:var(--text-3)}
-.sel{padding:9px 12px;border-radius:var(--r-lg);border:1px solid var(--border);background:var(--white);font-family:inherit;font-size:.85rem;color:var(--text);outline:none;cursor:pointer}
-
-/* TABLE */
-.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh)}
-.tbl{width:100%;border-collapse:collapse}
-.tbl th{background:var(--bg);color:var(--text-3);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:12px 14px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
-.tbl td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:.86rem;color:var(--text-2);vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:rgba(184,134,11,.025)}
-.t-name{font-weight:700;color:var(--text);font-size:.9rem}
-.t-phone{font-family:monospace;direction:ltr;color:var(--blue)}
-.t-price{font-weight:700;color:var(--gold-dk)}
-.status-badge{display:inline-block;padding:3px 9px;border-radius:var(--r-pill);font-size:.7rem;font-weight:700}
-.s-new{background:rgba(26,86,164,.1);color:#1a56a4;border:1px solid rgba(26,86,164,.2)}
-.s-done{background:rgba(45,106,79,.1);color:#2d6a4f;border:1px solid rgba(45,106,79,.2)}
-.s-cancelled{background:rgba(192,57,43,.1);color:#c0392b;border:1px solid rgba(192,57,43,.2)}
-.act-btns{display:flex;gap:5px;justify-content:flex-end}
-.act{padding:4px 10px;border-radius:7px;border:none;font-size:.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--tr)}
-.act-done{background:rgba(45,106,79,.1);color:#2d6a4f}.act-done:hover{background:rgba(45,106,79,.2)}
-.act-del{background:rgba(192,57,43,.1);color:#c0392b}.act-del:hover{background:rgba(192,57,43,.2)}
-.act-wa{background:rgba(37,211,102,.1);color:#1a7a47}.act-wa:hover{background:rgba(37,211,102,.2)}
-.act-back{background:rgba(26,86,164,.1);color:#1a56a4}.act-back:hover{background:rgba(26,86,164,.2)}
-.empty-td{text-align:center;padding:48px!important;color:var(--text-3)}
-
-/* PRODUCT GRID ADMIN */
-.pg-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.pa-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--sh);transition:box-shadow var(--tr)}
-.pa-card:hover{box-shadow:var(--sh-hov)}
-.pa-img{width:100%;aspect-ratio:1;border-radius:var(--r-lg);overflow:hidden;background:var(--bg);display:grid;place-items:center;flex-shrink:0}
-.pa-img img{width:100%;height:100%;object-fit:cover}
-.pa-info{}
-.pa-name{font-weight:700;color:var(--text);font-size:.93rem}
-.pa-brand{font-size:.76rem;color:var(--text-3);margin-top:1px}
-.pa-sizes{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.pa-size{padding:3px 8px;background:var(--bg);border-radius:var(--r-pill);font-size:.72rem;color:var(--text-2);font-weight:600;border:1px solid var(--border)}
-.pa-acts{display:flex;gap:6px;margin-top:4px}
-
-/* FORM CARD */
-.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:24px;box-shadow:var(--sh);margin-bottom:24px}
-.form-card h2{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);color:var(--text)}
-.fg{display:flex;flex-direction:column;gap:7px}
-.fg label{font-size:.8rem;font-weight:600;color:var(--text-2)}
-.fg input,.fg select,.fg textarea{padding:10px 12px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:.9rem;color:var(--text);outline:none;transition:border-color var(--tr)}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);background:var(--white)}
-.fg input::placeholder,.fg textarea::placeholder{color:var(--text-3)}
-.fg select option{background:var(--white)}
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.form-grid.c3{grid-template-columns:repeat(3,1fr)}
-.fc{grid-column:1/-1}
-.sizes-builder{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
-.sb-header{background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.sb-header span{font-size:.78rem;font-weight:600;color:var(--text-2)}
-.sb-rows{padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-height:40px}
-.size-row-input{display:flex;gap:8px;align-items:center}
-.size-row-input input{flex:1;padding:8px 10px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--white);font-family:inherit;font-size:.88rem;color:var(--text);outline:none;transition:border-color var(--tr)}
-.size-row-input input:focus{border-color:var(--gold)}
-.size-row-input input::placeholder{color:var(--text-3)}
-.size-del{width:30px;height:30px;border:none;background:rgba(192,57,43,.1);color:var(--red);border-radius:7px;cursor:pointer;font-size:.85rem;display:grid;place-items:center;flex-shrink:0;transition:background var(--tr)}
-.size-del:hover{background:rgba(192,57,43,.2)}
-
-/* OFFERS */
-.offer-adm{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:10px}
-.offer-adm h3{font-size:.97rem;font-weight:700;color:var(--text)}
-.offer-adm p{font-size:.84rem;color:var(--text-2);line-height:1.5}
-.offer-meta{display:flex;gap:14px;flex-wrap:wrap}
-.offer-meta span{font-size:.78rem;color:var(--text-3)}
-.offer-meta strong{color:var(--gold-dk)}
-.tog-wrap{display:flex;align-items:center;gap:8px}
-.tog-wrap label{font-size:.83rem;color:var(--text-2)}
-.tog{width:38px;height:21px;appearance:none;background:var(--border);border-radius:var(--r-pill);cursor:pointer;position:relative;transition:background var(--tr);border:none}
-.tog:checked{background:var(--green)}
-.tog::after{content:'';position:absolute;top:2.5px;right:2.5px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform var(--tr);box-shadow:0 1px 4px rgba(0,0,0,.15)}
-.tog:checked::after{transform:translateX(-17px)}
-
-/* PROMO TABLE */
-.promo-code{font-family:monospace;font-weight:700;color:var(--gold-dk);background:rgba(184,134,11,.08);padding:3px 9px;border-radius:7px;font-size:.92rem}
-.disc-badge{background:rgba(192,57,43,.1);color:var(--red);padding:2px 7px;border-radius:var(--r-pill);font-size:.72rem;font-weight:700}
-
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:22px;box-shadow:var(--sh)}
-.chart-card h3{font-size:.93rem;font-weight:700;color:var(--text);margin-bottom:16px}
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.bar-row:last-child{margin-bottom:0}
-.bar-lbl{font-size:.78rem;color:var(--text-2);min-width:100px;text-align:right}
-.bar-track{flex:1;background:var(--bg);border-radius:var(--r-pill);height:9px;overflow:hidden}
-.bar-fill{height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--gold-dk),var(--gold-lt));transition:width .9s ease}
-.bar-val{font-size:.75rem;color:var(--gold-dk);font-weight:700;min-width:60px;text-align:left}
-.top-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
-.top-row:last-child{border-bottom:none}
-.top-rank{width:22px;height:22px;border-radius:50%;background:rgba(184,134,11,.1);color:var(--gold-dk);font-size:.72rem;font-weight:700;display:grid;place-items:center;flex-shrink:0}
-.top-name{flex:1;font-size:.85rem;color:var(--text)}
-.top-cnt{font-size:.78rem;color:var(--text-3)}
-.top-rev{font-size:.82rem;color:var(--gold-dk);font-weight:700}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--r-pill);border:none;font-family:inherit;font-size:.86rem;font-weight:700;cursor:pointer;transition:all var(--tr);text-decoration:none;white-space:nowrap}
-.btn-primary{background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));color:#fff;box-shadow:0 4px 14px rgba(184,134,11,.25)}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(184,134,11,.35)}
-.btn-secondary{background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
-.btn-secondary:hover{background:var(--bg-s,#e8e0d4);border-color:var(--gold)}
-.btn-green{background:linear-gradient(135deg,#38a169,#2d6a4f);color:#fff}
-.btn-green:hover{transform:translateY(-1px)}
-.btn-danger{background:rgba(192,57,43,.1);color:var(--red);border:1px solid rgba(192,57,43,.15)}
-.btn-danger:hover{background:rgba(192,57,43,.18)}
-.btn-sm{padding:6px 13px;font-size:.78rem;border-radius:9px}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
-
-/* IMAGE UPLOAD */
-.img-upload-area{
-  border:2px dashed var(--border);border-radius:var(--r-lg);padding:20px;text-align:center;
-  cursor:pointer;transition:all var(--tr);background:var(--bg);position:relative;
-}
-.img-upload-area:hover{border-color:var(--gold);background:rgba(184,134,11,.03)}
-.img-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.img-preview{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--r-md);margin-top:10px;max-height:180px}
-
-/* MODAL */
-.mo{position:fixed;inset:0;background:rgba(26,20,16,.5);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--tr);padding:20px}
-.mo.open{opacity:1;pointer-events:auto}
-.mo-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:24px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(26,20,16,.2);transform:translateY(16px) scale(.97);transition:transform var(--tr)}
-.mo.open .mo-box{transform:none}
-.mo-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
-.mo-head h2{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:var(--text)}
-.mo-close{width:30px;height:30px;border:none;background:var(--bg);border-radius:7px;cursor:pointer;font-size:1rem;display:grid;place-items:center;transition:background var(--tr)}
-.mo-close:hover{background:var(--bg-s,#e8e0d4)}
-.mo-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-
-/* TOAST */
-#tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.tst{display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:var(--r-lg);background:var(--text);color:#fff;font-size:.86rem;font-weight:500;max-width:280px;box-shadow:0 6px 24px rgba(26,20,16,.15);animation:tIn .3s cubic-bezier(.34,1.56,.64,1) both;pointer-events:auto}
-.tst.ok{background:var(--green)}.tst.err{background:var(--red)}
-.tst.hid{animation:tOut .25s ease both}
-@keyframes tIn{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
-@keyframes tOut{from{opacity:1}to{opacity:0;transform:translateY(6px) scale(.96)}}
-
-/* LOGIN SCREEN */
-.login-screen{
-  position:fixed;inset:0;z-index:9999;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;
-}
-.login-box{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:var(--r-xl);padding:40px 36px;
-  width:100%;max-width:380px;
-  box-shadow:0 8px 40px rgba(90,60,20,.12);
-  text-align:center;
-}
-.login-logo{
-  width:52px;height:52px;border-radius:14px;
-  background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));
-  color:#fff;font-family:'Cormorant Garamond',serif;
-  font-size:1.5rem;font-weight:700;display:grid;place-items:center;
-  margin:0 auto 16px;box-shadow:0 4px 16px rgba(184,134,11,.3);
-}
-.login-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:4px}
-.login-sub{font-size:.83rem;color:var(--text-3);margin-bottom:28px}
-.login-fields{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;text-align:right}
-.login-fields label{font-size:.78rem;font-weight:600;color:var(--text-2);display:block;margin-bottom:5px}
-.login-fields input{
-  width:100%;padding:11px 14px;border-radius:var(--r-md);
-  border:1.5px solid var(--border);background:var(--bg);
-  font-family:inherit;font-size:.93rem;color:var(--text);
-  outline:none;transition:border-color var(--tr);
-}
-.login-fields input:focus{border-color:var(--gold);background:var(--white)}
-.login-fields input::placeholder{color:var(--text-3)}
-.login-btn{
-  width:100%;padding:13px;border-radius:var(--r-pill);border:none;
-  background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));
-  color:#fff;font-family:inherit;font-size:.95rem;font-weight:700;
-  cursor:pointer;transition:all var(--tr);
-  box-shadow:0 4px 16px rgba(184,134,11,.25);
-}
-.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(184,134,11,.35)}
-.login-err{
-  background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);
-  color:var(--red);border-radius:var(--r-md);padding:10px 14px;
-  font-size:.84rem;font-weight:600;margin-top:12px;display:none;
-}
-.login-hint{font-size:.75rem;color:var(--text-3);margin-top:16px}
-
-/* RESPONSIVE */
-@media(max-width:960px){
-  .sidebar{position:fixed;right:-240px;top:0;height:100vh;transition:right var(--tr);z-index:150;width:230px}
-  .sidebar.open{right:0;box-shadow:-12px 0 40px rgba(90,60,20,.12)}
-  .mob-top{display:flex}
-  .main{padding:72px 16px 60px}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
-  .form-grid,.form-grid.c3{grid-template-columns:1fr}
-  .stats-grid{grid-template-columns:1fr}
-}
-@media(max-width:560px){
-  .stats-row{grid-template-columns:1fr 1fr}
-  .tbl th:nth-child(n+5),.tbl td:nth-child(n+5){display:none}
-  .pg-admin{grid-template-columns:1fr 1fr}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="admin.css"/>
 </head>
 <body>
-<div id="tc"></div>
+<div id="tc" style="top:20px"></div>
 
-<!-- LOGIN SCREEN -->
-<div class="login-screen" id="loginScreen">
+<!-- LOGIN -->
+<div class="login" id="loginScreen">
   <div class="login-box">
-    <div class="login-logo">S</div>
-    <div class="login-title">Shahenda Store</div>
-    <div class="login-sub">لوحة التحكم — الدخول مخصص للمسؤول فقط</div>
-    <div class="login-fields">
-      <div>
-        <label>اسم المستخدم</label>
-        <input type="text" id="loginUser" placeholder="admin" autocomplete="username"/>
-      </div>
-      <div>
-        <label>كلمة المرور</label>
-        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
-      </div>
-    </div>
-    <button class="login-btn" id="loginBtn">دخول ←</button>
-    <div class="login-err" id="loginErr">اسم المستخدم أو كلمة المرور غلط</div>
-    <div class="login-hint">💡 اضغط Enter للدخول</div>
+    <div class="logo-mark" style="margin:0 auto;width:52px;height:52px;font-size:1.5rem">✂</div>
+    <h1>لوحة التحكم</h1>
+    <div class="mut" style="margin-bottom:22px">الدخول للمسؤول فقط</div>
+    <div class="fg" style="text-align:right;margin-bottom:12px"><label>الإيميل</label><input id="loginUser" type="email" autocomplete="username" placeholder="admin@example.com"/></div>
+    <div class="fg" style="text-align:right;margin-bottom:18px"><label>كلمة المرور</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••"/></div>
+    <button class="btn btn-gold" id="loginBtn" style="width:100%">دخول</button>
+    <div class="login-err" id="loginErr">الإيميل أو كلمة المرور غلط</div>
   </div>
 </div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sb-brand">
-    <span class="sb-mark">S</span>
-    <div><div class="sb-title">Shahenda Store</div><div class="sb-sub">لوحة التحكم</div></div>
-  </div>
+  <div class="sb-brand"><span class="logo-mark">✂</span><span id="admName">Barber Shop</span></div>
   <nav class="sb-nav">
-    <button class="nav-link active" data-tab="orders"><span class="nav-icon">📦</span>الطلبات<span class="nav-badge" id="newBadge" style="display:none">0</span></button>
-    <button class="nav-link" data-tab="products"><span class="nav-icon">🧴</span>المنتجات</button>
-    <button class="nav-link" data-tab="offers"><span class="nav-icon">🎁</span>العروض</button>
-    <button class="nav-link" data-tab="promos"><span class="nav-icon">🏷️</span>كودات الخصم</button>
-    <button class="nav-link" data-tab="stats"><span class="nav-icon">📊</span>الإحصائيات</button>
+    <button class="nav on" data-tab="queue">⏳ قائمة الانتظار<span class="badge" id="qBadge" style="display:none">0</span></button>
+    <button class="nav" data-tab="history">📋 سجل الحجوزات</button>
+    <button class="nav" data-tab="barbers">💈 الحلاقين</button>
+    <button class="nav" data-tab="services">✂ الخدمات والأسعار</button>
+    <button class="nav" data-tab="packages">🎁 الباكدجات</button>
+    <button class="nav" data-tab="settings">⚙ الإعدادات</button>
   </nav>
-  <div class="sb-footer">
-    <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span>المتجر</a>
-    <button class="nav-link" id="logoutBtn" style="color:var(--red);margin-top:2px"><span class="nav-icon">🚪</span>تسجيل خروج</button>
+  <div class="sb-foot">
+    <a class="nav" href="index.html">🏠 موقع العملاء</a>
+    <button class="nav" id="logoutBtn" style="color:var(--red)">🚪 تسجيل خروج</button>
   </div>
 </aside>
-<div id="sbOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:140" onclick="closeSB()"></div>
+<div id="sbOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:250"></div>
+<div class="mob"><button id="mobBtn">☰</button><b>لوحة التحكم</b><span class="logo-mark" style="width:30px;height:30px;font-size:.9rem">✂</span></div>
 
-<!-- MOBILE TOP -->
-<div class="mob-top">
-  <button class="mob-toggle" id="mobToggle">☰</button>
-  <span class="mob-title">لوحة التحكم</span>
-  <span class="sb-mark" style="width:30px;height:30px;font-size:.9rem">S</span>
-</div>
-
-<!-- MAIN -->
 <div class="main">
 
-  <!-- ══ ORDERS ══ -->
-  <section class="tab-panel active" id="tab-orders">
+  <!-- QUEUE -->
+  <section class="tab-p on" id="tab-queue">
     <div class="ph">
-      <div><h1>الطلبات</h1><p class="ph-sub">إدارة ومتابعة جميع الطلبات</p></div>
-      <div class="ph-acts">
-        <button class="btn btn-secondary" id="btnExport">⬇ CSV</button>
-        <button class="btn btn-primary" id="btnRefresh">↻ تحديث</button>
+      <div><h1>قائمة الانتظار</h1><div class="mut">النهارده · بتتحدث تلقائياً كل 10 ثواني</div></div>
+      <div class="acts">
+        <button class="btn btn-gold" id="btnWalk">+ إضافة عميل في المحل</button>
+        <button class="btn btn-line" id="btnRefresh">↻ تحديث</button>
       </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-card"><span class="stat-icon">📦</span><div><div class="stat-label">إجمالي</div><div class="stat-val" id="stTotal">—</div></div></div>
-      <div class="stat-card"><span class="stat-icon">🆕</span><div><div class="stat-label">جديدة</div><div class="stat-val" id="stNew">—</div></div></div>
-      <div class="stat-card"><span class="stat-icon">💰</span><div><div class="stat-label">المبيعات</div><div class="stat-val" id="stRev">—</div></div></div>
-      <div class="stat-card"><span class="stat-icon">📅</span><div><div class="stat-label">اليوم</div><div class="stat-val" id="stToday">—</div></div></div>
+    <div class="stats">
+      <div class="stat"><div class="k">في الانتظار</div><div class="v" id="sWait">—</div></div>
+      <div class="stat"><div class="k">خلصوا النهارده</div><div class="v" id="sDone">—</div></div>
+      <div class="stat"><div class="k">إيراد النهارده</div><div class="v" id="sRev">—</div></div>
+      <div class="stat"><div class="k">متوسط الخدمة</div><div class="v" id="sAvg">—</div></div>
     </div>
-    <div class="filter-bar">
-      <div class="s-wrap"><span class="s-ic">🔍</span><input type="text" id="orderSrch" placeholder="بحث بالاسم أو المنتج أو الهاتف..."/></div>
-      <select class="sel" id="orderStatus">
-        <option value="all">كل الطلبات</option>
-        <option value="new">جديدة</option>
-        <option value="done">مكتملة</option>
-        <option value="cancelled">ملغاة</option>
-      </select>
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>#</th><th>العميل</th><th>المنتج</th><th>الحجم</th><th>الكمية</th><th>الإجمالي</th><th>التاريخ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-        <tbody id="ordersTbody"><tr><td colspan="9" class="empty-td">⏳ جاري التحميل...</td></tr></tbody>
-      </table>
-    </div>
+    <div class="board" id="board"></div>
   </section>
 
-  <!-- ══ PRODUCTS ══ -->
-  <section class="tab-panel" id="tab-products">
+  <!-- HISTORY -->
+  <section class="tab-p" id="tab-history">
     <div class="ph">
-      <div><h1>المنتجات</h1><p class="ph-sub">أضف وعدّل منتجات المتجر</p></div>
-      <div class="ph-acts">
-        <button class="btn btn-primary" id="btnAddProd">+ منتج جديد</button>
-      </div>
+      <div><h1>سجل الحجوزات</h1><div class="mut">اختار اليوم</div></div>
+      <div class="acts"><input type="date" id="histDate" class="btn btn-line" style="font-family:inherit"/><button class="btn btn-line" id="btnCsv">⬇ CSV</button></div>
     </div>
-
-    <div class="form-card" id="prodFormCard" style="display:none">
-      <h2 id="prodFormTitle">➕ منتج جديد</h2>
-      <div class="form-grid">
-        <div class="fg"><label>اسم العطر *</label><input id="pName" placeholder="مثال: Sauvage"/></div>
-        <div class="fg"><label>الماركة *</label><input id="pBrand" placeholder="مثال: Dior"/></div>
-        <div class="fg"><label>الفئة *</label>
-          <select id="pCat">
-            <option value="Men / Unisex">رجالي / يونيسكس</option>
-            <option value="Women">نسائي</option>
-            <option value="Musk / Oud / Special">مسك / عود / خاص</option>
-          </select>
-        </div>
-        <div class="fg"><label>خصم % (0 = لا يوجد)</label><input id="pDiscount" type="number" min="0" max="90" value="0"/></div>
-        <div class="fg"><label>التقييم (1-5)</label><input id="pRating" type="number" min="1" max="5" step="0.1" value="4.5"/></div>
-        <div class="fg"><label>الوصف</label><input id="pDesc" placeholder="وصف مختصر للعطر"/></div>
-        <div class="fg fc">
-          <label>صورة المنتج</label>
-          <div class="img-upload-area" id="imgUploadArea">
-            <input type="file" id="pImgFile" accept="image/*" onchange="handleImgUpload(this)"/>
-            <div id="imgPlaceholder">
-              <div style="font-size:2rem;margin-bottom:8px">📸</div>
-              <div style="font-size:.83rem;color:var(--text-3)">اضغط لرفع صورة أو اسحب هنا</div>
-            </div>
-            <img id="imgPreview" class="img-preview" style="display:none"/>
-          </div>
-          <div class="fg" style="margin-top:8px"><label>أو رابط صورة</label><input id="pImgUrl" placeholder="https://..." oninput="previewUrl(this.value)"/></div>
-        </div>
-        <div class="fg fc">
-          <label>الأحجام والأسعار *</label>
-          <div class="sizes-builder">
-            <div class="sb-header">
-              <span>أضف الحجوم المتاحة بالميللي وسعر كل حجم</span>
-              <button class="btn btn-secondary btn-sm" type="button" onclick="addSizeRow()">+ إضافة حجم</button>
-            </div>
-            <div class="sb-rows" id="sizeRows"></div>
-          </div>
-        </div>
-      </div>
-      <input type="hidden" id="editProdId"/>
-      <input type="hidden" id="pImgFinal"/>
-      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
-        <button class="btn btn-secondary" id="btnCancelProd">إلغاء</button>
-        <button class="btn btn-primary" id="btnSaveProd">💾 حفظ المنتج</button>
-      </div>
+    <div class="stats">
+      <div class="stat"><div class="k">إجمالي الحجوزات</div><div class="v" id="hTot">—</div></div>
+      <div class="stat"><div class="k">مكتملة</div><div class="v" id="hDone">—</div></div>
+      <div class="stat"><div class="k">ملغية / ما جاش</div><div class="v" id="hCan">—</div></div>
+      <div class="stat"><div class="k">الإيراد</div><div class="v" id="hRev">—</div></div>
     </div>
-
-    <div class="filter-bar">
-      <div class="s-wrap"><span class="s-ic">🔍</span><input type="text" id="prodSrch" placeholder="بحث..."/></div>
-      <select class="sel" id="prodCat">
-        <option value="all">كل الفئات</option>
-        <option value="Men / Unisex">رجالي / يونيسكس</option>
-        <option value="Women">نسائي</option>
-        <option value="Musk / Oud / Special">مسك / عود</option>
-      </select>
-    </div>
-    <div class="pg-admin" id="prodGrid"></div>
+    <div class="tbl-w"><table class="tbl">
+      <thead><tr><th>#</th><th>العميل</th><th>الحلاق</th><th>الخدمة</th><th>المدة</th><th>السعر</th><th>الحالة</th></tr></thead>
+      <tbody id="histBody"></tbody></table></div>
   </section>
 
-  <!-- ══ OFFERS ══ -->
-  <section class="tab-panel" id="tab-offers">
-    <div class="ph">
-      <div><h1>العروض</h1><p class="ph-sub">أنشئ وعدّل عروض خاصة</p></div>
-      <button class="btn btn-primary" id="btnAddOffer">+ عرض جديد</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:14px" id="offersList"></div>
+  <!-- BARBERS -->
+  <section class="tab-p" id="tab-barbers">
+    <div class="ph"><div><h1>الحلاقين</h1><div class="mut">الحلاقين اللي العملاء بيختاروا منهم</div></div>
+      <button class="btn btn-gold" onclick="editItem('barbers')">+ حلاق جديد</button></div>
+    <div class="tbl-w"><table class="tbl"><thead><tr><th>الحلاق</th><th>ظاهر</th><th></th></tr></thead><tbody id="list-barbers"></tbody></table></div>
   </section>
 
-  <!-- ══ PROMOS ══ -->
-  <section class="tab-panel" id="tab-promos">
-    <div class="ph">
-      <div><h1>كودات الخصم</h1><p class="ph-sub">أنشئ وأدر كودات خصم</p></div>
-      <button class="btn btn-primary" id="btnAddPromo">+ كود جديد</button>
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>الكود</th><th>الخصم</th><th>الاستخدام</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-        <tbody id="promosTbody"></tbody>
-      </table>
-    </div>
+  <!-- SERVICES -->
+  <section class="tab-p" id="tab-services">
+    <div class="ph"><div><h1>الخدمات والأسعار</h1><div class="mut">حدد السعر والوقت التقديري لكل خدمة (الوقت هو اللي بيحسب الانتظار)</div></div>
+      <button class="btn btn-gold" onclick="editItem('services')">+ خدمة جديدة</button></div>
+    <div class="tbl-w"><table class="tbl"><thead><tr><th>الخدمة</th><th>السعر</th><th>الوقت</th><th>ظاهرة</th><th></th></tr></thead><tbody id="list-services"></tbody></table></div>
   </section>
 
-  <!-- ══ STATS ══ -->
-  <section class="tab-panel" id="tab-stats">
-    <div class="ph">
-      <div><h1>الإحصائيات</h1><p class="ph-sub">تحليل المبيعات</p></div>
-      <button class="btn btn-secondary" id="btnRefreshStats">↻</button>
-    </div>
-    <div class="stats-row" style="margin-bottom:24px">
-      <div class="stat-card"><span class="stat-icon">📦</span><div><div class="stat-label">إجمالي الطلبات</div><div class="stat-val" id="ss-total">—</div></div></div>
-      <div class="stat-card"><span class="stat-icon">💰</span><div><div class="stat-label">إجمالي المبيعات</div><div class="stat-val" id="ss-rev">—</div></div></div>
-      <div class="stat-card"><span class="stat-icon">🎯</span><div><div class="stat-label">متوسط الطلب</div><div class="stat-val" id="ss-avg">—</div></div></div>
-      <div class="stat-card"><span class="stat-icon">🏷️</span><div><div class="stat-label">بكود خصم</div><div class="stat-val" id="ss-promo">—</div></div></div>
-    </div>
-    <div class="stats-grid">
-      <div class="chart-card"><h3>📈 المبيعات حسب الفئة</h3><div id="catChart"></div></div>
-      <div class="chart-card"><h3>🏆 أكثر المنتجات طلباً</h3><div id="topChart"></div></div>
-      <div class="chart-card"><h3>📏 المبيعات حسب الحجم</h3><div id="sizeChart"></div></div>
-      <div class="chart-card"><h3>🧴 نوع العبوة</h3><div id="bottleChart"></div></div>
-    </div>
+  <!-- PACKAGES -->
+  <section class="tab-p" id="tab-packages">
+    <div class="ph"><div><h1>الباكدجات</h1><div class="mut">باكدجات العرسان والعروض الخاصة</div></div>
+      <button class="btn btn-gold" onclick="editItem('packages')">+ باكدج جديد</button></div>
+    <div class="tbl-w"><table class="tbl"><thead><tr><th>الباكدج</th><th>السعر</th><th>الوقت</th><th>ظاهر</th><th></th></tr></thead><tbody id="list-packages"></tbody></table></div>
   </section>
 
+  <!-- SETTINGS -->
+  <section class="tab-p" id="tab-settings">
+    <div class="ph"><div><h1>الإعدادات</h1></div></div>
+    <div class="form" style="max-width:560px">
+      <div class="fg full"><label>اسم المحل</label><input id="setName"/></div>
+      <div class="fg full"><label>رقم واتساب (بصيغة دولية 20...)</label><input id="setWa" style="direction:ltr;text-align:right"/></div>
+      <div class="fg full" style="flex-direction:row;align-items:center;gap:10px">
+        <input type="checkbox" class="tog" id="setAcc"/><label for="setAcc">استقبال الحجز الأونلاين شغّال</label></div>
+      <div class="fg full"><button class="btn btn-gold" id="btnSaveSet">💾 حفظ</button></div>
+    </div>
+  </section>
 </div>
 
-<!-- MODAL: Offer -->
-<div class="mo" id="moOffer">
-  <div class="mo-box">
-    <div class="mo-head"><h2 id="moOfferTitle">🎁 عرض جديد</h2><button class="mo-close" onclick="closeMo('moOffer')">✕</button></div>
-    <div class="form-grid">
-      <div class="fg"><label>اسم العرض *</label><input id="oName" placeholder="مثال: بوكس 10 عطور 30ml"/></div>
-      <div class="fg"><label>السعر (جنيه) *</label><input id="oPrice" type="number" min="0"/></div>
-      <div class="fg"><label>السعر الأصلي (للشطب)</label><input id="oOldPrice" type="number" min="0"/></div>
-      <div class="fg"><label>عدد القطع</label><input id="oQty" type="number" min="1" value="10"/></div>
-      <div class="fg fc"><label>الوصف</label><textarea id="oDesc" rows="2" placeholder="وصف العرض..."></textarea></div>
-      <div class="fg fc tog-wrap"><input type="checkbox" class="tog" id="oActive" checked/><label for="oActive">العرض مفعّل</label></div>
-    </div>
-    <input type="hidden" id="editOfferId"/>
-    <div class="mo-foot">
-      <button class="btn btn-secondary" onclick="closeMo('moOffer')">إلغاء</button>
-      <button class="btn btn-primary" id="btnSaveOffer">💾 حفظ</button>
-    </div>
+<!-- Item modal (generic) -->
+<div class="mo" id="moItem"><div class="mo-box">
+  <div class="mo-head"><h2 id="itemTitle"></h2><button class="mo-x" onclick="closeMo('moItem')">✕</button></div>
+  <div class="form" style="grid-template-columns:1fr;box-shadow:none;border:none;padding:0" id="itemFields"></div>
+  <div class="mo-foot"><button class="btn btn-line" onclick="closeMo('moItem')">إلغاء</button><button class="btn btn-gold" id="btnSaveItem">💾 حفظ</button></div>
+</div></div>
+
+<!-- Walk-in modal -->
+<div class="mo" id="moWalk"><div class="mo-box">
+  <div class="mo-head"><h2>+ عميل في المحل</h2><button class="mo-x" onclick="closeMo('moWalk')">✕</button></div>
+  <div class="form" style="grid-template-columns:1fr;box-shadow:none;border:none;padding:0">
+    <div class="fg"><label>الاسم</label><input id="wName" placeholder="عميل بالمحل"/></div>
+    <div class="fg"><label>الموبايل (اختياري)</label><input id="wPhone" type="tel"/></div>
+    <div class="fg"><label>الحلاق</label><select id="wBarber"></select></div>
+    <div class="fg"><label>الباكدج (اختياري)</label><select id="wPack"></select></div>
+    <div class="fg"><label>أو الخدمات</label><div class="chk-list" id="wServices"></div></div>
   </div>
-</div>
-
-<!-- MODAL: Promo -->
-<div class="mo" id="moPromo">
-  <div class="mo-box">
-    <div class="mo-head"><h2>🏷️ كود خصم جديد</h2><button class="mo-close" onclick="closeMo('moPromo')">✕</button></div>
-    <div class="form-grid">
-      <div class="fg"><label>الكود *</label><input id="proCode" placeholder="SAVE20" style="text-transform:uppercase"/></div>
-      <div class="fg"><label>نسبة الخصم % *</label><input id="proDisc" type="number" min="1" max="90"/></div>
-      <div class="fg"><label>الحد الأقصى للاستخدام (0 = بلا حد)</label><input id="proMax" type="number" min="0" value="0"/></div>
-      <div class="fg tog-wrap"><input type="checkbox" class="tog" id="proActive" checked/><label for="proActive">مفعّل</label></div>
-    </div>
-    <div class="mo-foot">
-      <button class="btn btn-secondary" onclick="closeMo('moPromo')">إلغاء</button>
-      <button class="btn btn-primary" id="btnSavePromo">💾 حفظ</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Delete Confirm -->
-<div class="mo" id="moDel">
-  <div class="mo-box" style="max-width:340px;text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:12px">🗑️</div>
-    <h2 style="font-size:1.1rem;margin-bottom:8px">تأكيد الحذف</h2>
-    <p id="delText" style="color:var(--text-2);font-size:.88rem;margin-bottom:20px"></p>
-    <div style="display:flex;gap:8px;justify-content:center">
-      <button class="btn btn-secondary" onclick="closeMo('moDel')">إلغاء</button>
-      <button class="btn btn-danger" id="btnConfirmDel">حذف</button>
-    </div>
-  </div>
-</div>
+  <div class="mo-foot"><button class="btn btn-line" onclick="closeMo('moWalk')">إلغاء</button><button class="btn btn-gold" id="btnSaveWalk">إضافة للطابور</button></div>
+</div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="admin.js"></script>
