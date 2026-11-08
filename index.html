@@ -3,717 +3,98 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="description" content="Shahenda Store - عطور فاخرة أصلية بأسعار تنافسية"/>
-<title>Shahenda Store | عطور فاخرة</title>
+<meta name="description" content="احجز دورك عند الحلاق أونلاين وتابع قائمة الانتظار"/>
+<title>احجز عند الحلاق | Barber Shop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-<style>
-/* ══════════════════════════════════════
-   SHAHENDA STORE — Store Front
-   Aesthetic: Luxury Cream / Warm Gold
-══════════════════════════════════════ */
-:root {
-  --cream:     #faf7f2;
-  --cream-d:   #f0ebe2;
-  --cream-dd:  #e8e0d4;
-  --gold:      #b8860b;
-  --gold-lt:   #d4a843;
-  --gold-dk:   #8b6308;
-  --text:      #1a1410;
-  --text-2:    #5c4e3a;
-  --text-3:    #9a8878;
-  --white:     #ffffff;
-  --border:    rgba(184,134,11,0.15);
-  --border-d:  rgba(184,134,11,0.30);
-  --shadow:    0 4px 24px rgba(90,60,20,0.10);
-  --shadow-hov:0 12px 48px rgba(90,60,20,0.18);
-  --green:     #2d6a4f;
-  --red:       #c0392b;
-  --r-sm:8px; --r-md:14px; --r-lg:20px; --r-xl:28px; --r-pill:999px;
-  --tr:.22s cubic-bezier(.4,0,.2,1);
-  font-family:'Tajawal',system-ui,sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--cream);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-
-/* ── HEADER ── */
-.header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(250,247,242,0.96);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;
-}
-.header-inner{
-  max-width:1200px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;
-  height:68px;gap:16px;
-}
-.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-.logo-mark{
-  width:40px;height:40px;border-radius:10px;
-  background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));
-  color:var(--white);font-family:'Cormorant Garamond',serif;
-  font-size:1.25rem;font-weight:700;display:grid;place-items:center;
-  box-shadow:0 4px 12px rgba(184,134,11,.3);
-}
-.logo-text{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--text)}
-.logo-sub{font-size:.68rem;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:-2px}
-
-.header-actions{display:flex;align-items:center;gap:10px}
-.hbtn{
-  display:flex;align-items:center;gap:7px;padding:9px 18px;
-  border-radius:var(--r-pill);border:1px solid var(--border-d);
-  background:transparent;color:var(--text-2);font-family:inherit;
-  font-size:.85rem;font-weight:500;cursor:pointer;transition:all var(--tr);
-  text-decoration:none;
-}
-.hbtn:hover{background:var(--cream-d);border-color:var(--gold)}
-.hbtn.cart{background:var(--text);color:var(--white);border-color:var(--text);position:relative}
-.hbtn.cart:hover{background:var(--gold-dk);border-color:var(--gold-dk)}
-.cart-badge{
-  position:absolute;top:-6px;right:-6px;width:20px;height:20px;
-  background:var(--gold-lt);color:var(--text);font-size:.65rem;font-weight:700;
-  border-radius:50%;display:grid;place-items:center;border:2px solid var(--cream);
-}
-
-/* ── HERO ── */
-.hero{
-  max-width:1200px;margin:0 auto;
-  padding:56px 24px 48px;
-  display:grid;grid-template-columns:1fr 420px;gap:48px;align-items:center;
-}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(184,134,11,.08);border:1px solid var(--border-d);
-  border-radius:var(--r-pill);padding:6px 14px;
-  font-size:.78rem;font-weight:500;color:var(--gold-dk);margin-bottom:20px;
-}
-.hero h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(2.4rem,4vw,3.8rem);font-weight:600;
-  line-height:1.12;color:var(--text);margin-bottom:16px;
-}
-.hero h1 em{color:var(--gold);font-style:normal}
-.hero p{font-size:1.05rem;color:var(--text-2);line-height:1.7;margin-bottom:28px;max-width:420px}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn-primary{
-  padding:13px 28px;border-radius:var(--r-pill);border:none;
-  background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));
-  color:var(--white);font-family:inherit;font-size:.93rem;font-weight:700;
-  cursor:pointer;transition:all var(--tr);text-decoration:none;display:inline-flex;align-items:center;gap:8px;
-  box-shadow:0 6px 20px rgba(184,134,11,.28);
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(184,134,11,.38)}
-.btn-outline{
-  padding:13px 28px;border-radius:var(--r-pill);
-  border:1.5px solid var(--border-d);background:transparent;
-  color:var(--text);font-family:inherit;font-size:.93rem;font-weight:600;
-  cursor:pointer;transition:all var(--tr);text-decoration:none;display:inline-flex;align-items:center;gap:8px;
-}
-.btn-outline:hover{background:var(--cream-d);border-color:var(--gold)}
-
-.hero-visual{
-  background:linear-gradient(135deg,var(--cream-d),var(--cream-dd));
-  border-radius:var(--r-xl);border:1px solid var(--border-d);
-  aspect-ratio:4/3;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:16px;
-  box-shadow:var(--shadow);position:relative;overflow:hidden;
-}
-.hero-visual::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:200px;height:200px;
-  background:radial-gradient(circle,rgba(184,134,11,.12),transparent 65%);
-}
-.hero-scent-bubbles{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding:0 20px}
-.scent-bubble{
-  padding:8px 16px;border-radius:var(--r-pill);
-  background:var(--white);border:1px solid var(--border);
-  font-size:.82rem;color:var(--text-2);font-weight:500;
-  box-shadow:0 2px 8px rgba(90,60,20,.08);
-}
-.hero-visual-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--text-3);letter-spacing:.08em}
-
-/* ── TRUST BAR ── */
-.trust-bar{background:var(--cream-d);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.trust-inner{
-  max-width:1200px;margin:0 auto;padding:16px 24px;
-  display:flex;justify-content:center;gap:32px;flex-wrap:wrap;
-}
-.trust-item{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-2);font-weight:500}
-.trust-icon{font-size:1.1rem}
-
-/* ── SECTION ── */
-.section{max-width:1200px;margin:0 auto;padding:48px 24px}
-.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;gap:16px;flex-wrap:wrap}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--text)}
-.section-sub{font-size:.88rem;color:var(--text-3);margin-top:4px}
-
-/* ── FILTERS ── */
-.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
-.filter-chip{
-  padding:8px 18px;border-radius:var(--r-pill);
-  border:1.5px solid var(--border-d);background:var(--white);
-  font-family:inherit;font-size:.84rem;font-weight:500;color:var(--text-2);
-  cursor:pointer;transition:all var(--tr);
-}
-.filter-chip:hover{border-color:var(--gold);color:var(--gold-dk)}
-.filter-chip.active{
-  background:var(--text);border-color:var(--text);color:var(--white);
-}
-.search-box{
-  display:flex;align-items:center;gap:10px;
-  background:var(--white);border:1.5px solid var(--border-d);
-  border-radius:var(--r-pill);padding:8px 18px;flex:1;min-width:220px;max-width:320px;
-}
-.search-box input{
-  border:none;background:transparent;outline:none;font-family:inherit;
-  font-size:.88rem;color:var(--text);width:100%;
-}
-.search-box input::placeholder{color:var(--text-3)}
-
-/* ── PRODUCT GRID ── */
-.products-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:24px;
-}
-.product-card{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:var(--r-xl);overflow:hidden;
-  transition:transform var(--tr),box-shadow var(--tr),border-color var(--tr);
-  cursor:pointer;
-}
-.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hov);border-color:var(--border-d)}
-
-.card-img{
-  aspect-ratio:1;position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--cream-d),var(--cream-dd));
-}
-.card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
-.product-card:hover .card-img img{transform:scale(1.05)}
-.card-img-placeholder{
-  width:100%;height:100%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:10px;color:var(--text-3);
-}
-.card-discount{
-  position:absolute;top:12px;right:12px;
-  background:var(--red);color:var(--white);
-  padding:4px 10px;border-radius:var(--r-pill);font-size:.72rem;font-weight:700;
-}
-.card-cat{
-  position:absolute;top:12px;left:12px;
-  background:rgba(250,247,242,.9);color:var(--text-2);
-  padding:4px 10px;border-radius:var(--r-pill);font-size:.7rem;font-weight:500;
-  backdrop-filter:blur(8px);border:1px solid var(--border);
-}
-.card-body{padding:18px 18px 20px}
-.card-brand{font-size:.76rem;color:var(--text-3);font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.card-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--text);margin-bottom:6px}
-.card-desc{font-size:.82rem;color:var(--text-2);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card-rating{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--gold);margin-bottom:14px}
-.card-rating span{color:var(--text-3);font-weight:500}
-.card-sizes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.size-tag{
-  padding:4px 10px;border-radius:var(--r-pill);font-size:.75rem;font-weight:600;
-  background:var(--cream-d);color:var(--text-2);border:1px solid var(--border);
-}
-.card-price-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.card-price{font-size:1.05rem;font-weight:700;color:var(--text)}
-.card-price-from{font-size:.75rem;color:var(--text-3);margin-bottom:2px}
-.card-btn{
-  width:100%;padding:11px;border-radius:var(--r-lg);border:none;
-  background:var(--text);color:var(--white);font-family:inherit;
-  font-size:.87rem;font-weight:700;cursor:pointer;transition:all var(--tr);
-}
-.card-btn:hover{background:var(--gold-dk)}
-
-/* ── NO PRODUCTS ── */
-.no-products{
-  grid-column:1/-1;text-align:center;padding:64px 20px;
-  color:var(--text-3);
-}
-.no-products .np-icon{font-size:3rem;margin-bottom:12px}
-.no-products h3{color:var(--text-2);margin-bottom:6px}
-
-/* ── PRODUCT DRAWER (QUICK BUY) ── */
-.drawer-overlay{
-  position:fixed;inset:0;background:rgba(26,20,16,.5);
-  backdrop-filter:blur(6px);z-index:300;
-  opacity:0;pointer-events:none;transition:opacity var(--tr);
-}
-.drawer-overlay.open{opacity:1;pointer-events:auto}
-.drawer{
-  position:fixed;bottom:0;left:0;right:0;z-index:301;
-  background:var(--white);border-radius:24px 24px 0 0;
-  padding:0 0 env(safe-area-inset-bottom,0);
-  max-height:90vh;overflow-y:auto;
-  transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 -8px 40px rgba(90,60,20,.15);
-}
-.drawer.open{transform:none}
-.drawer-handle{width:40px;height:4px;background:var(--cream-dd);border-radius:2px;margin:14px auto 0}
-.drawer-inner{padding:20px 24px 32px}
-.drawer-header{display:flex;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--cream-d)}
-.drawer-img{
-  width:88px;height:88px;flex-shrink:0;border-radius:14px;overflow:hidden;
-  background:var(--cream-d);border:1px solid var(--border);display:grid;place-items:center;
-}
-.drawer-img img{width:100%;height:100%;object-fit:cover}
-.drawer-product-brand{font-size:.75rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em}
-.drawer-product-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--text);margin-top:3px}
-.drawer-product-desc{font-size:.83rem;color:var(--text-2);margin-top:6px;line-height:1.5}
-
-.drawer-section-label{font-size:.78rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-.size-options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-.size-opt{
-  padding:10px 20px;border-radius:var(--r-lg);border:1.5px solid var(--border-d);
-  background:var(--white);font-family:inherit;font-size:.88rem;font-weight:600;
-  color:var(--text-2);cursor:pointer;transition:all var(--tr);
-  display:flex;flex-direction:column;align-items:center;gap:2px;
-}
-.size-opt .ml{font-size:.82rem}
-.size-opt .price{font-size:.72rem;color:var(--text-3)}
-.size-opt.active{
-  background:var(--text);border-color:var(--text);color:var(--white);
-}
-.size-opt.active .price{color:rgba(255,255,255,.7)}
-.size-opt:hover:not(.active){border-color:var(--gold);color:var(--gold-dk)}
-
-.qty-row{display:flex;align-items:center;gap:16px;margin-bottom:22px}
-.qty-control{display:flex;align-items:center;gap:0;border:1.5px solid var(--border-d);border-radius:var(--r-lg);overflow:hidden}
-.qty-btn{
-  width:40px;height:40px;border:none;background:var(--cream-d);color:var(--text);
-  font-size:1.2rem;cursor:pointer;transition:background var(--tr);
-  display:grid;place-items:center;
-}
-.qty-btn:hover{background:var(--cream-dd)}
-.qty-val{width:48px;text-align:center;font-weight:700;font-size:.95rem;color:var(--text)}
-.qty-total{font-size:1rem;color:var(--text-2)}
-.qty-total strong{color:var(--text);font-size:1.15rem}
-
-.drawer-notes{margin-bottom:22px}
-.drawer-notes textarea{
-  width:100%;padding:12px 14px;border-radius:var(--r-md);
-  border:1.5px solid var(--border-d);background:var(--cream);
-  font-family:inherit;font-size:.88rem;color:var(--text);
-  outline:none;resize:none;transition:border-color var(--tr);line-height:1.5;
-}
-.drawer-notes textarea:focus{border-color:var(--gold)}
-.drawer-notes textarea::placeholder{color:var(--text-3)}
-
-.drawer-summary{
-  background:var(--cream-d);border-radius:var(--r-lg);
-  padding:16px 18px;margin-bottom:20px;
-}
-.sum-row{display:flex;justify-content:space-between;font-size:.88rem;color:var(--text-2);margin-bottom:8px}
-.sum-row:last-child{margin-bottom:0;font-weight:700;color:var(--text);font-size:.95rem;padding-top:8px;border-top:1px solid var(--border-d)}
-
-.customer-fields{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
-.field-group{display:flex;flex-direction:column;gap:6px}
-.field-group label{font-size:.78rem;font-weight:600;color:var(--text-2)}
-.field-group input,.field-group textarea{
-  padding:11px 14px;border-radius:var(--r-md);
-  border:1.5px solid var(--border-d);background:var(--cream);
-  font-family:inherit;font-size:.9rem;color:var(--text);
-  outline:none;transition:border-color var(--tr);
-}
-.field-group input:focus,.field-group textarea:focus{border-color:var(--gold)}
-.field-group input::placeholder,.field-group textarea::placeholder{color:var(--text-3)}
-.fields-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-.promo-row{display:flex;gap:8px;margin-bottom:20px}
-.promo-row input{
-  flex:1;padding:11px 14px;border-radius:var(--r-md);
-  border:1.5px solid var(--border-d);background:var(--cream);
-  font-family:inherit;font-size:.88rem;color:var(--text);outline:none;
-  transition:border-color var(--tr);
-}
-.promo-row input:focus{border-color:var(--gold)}
-.promo-row input::placeholder{color:var(--text-3)}
-.promo-row button{
-  padding:11px 18px;border-radius:var(--r-md);border:1.5px solid var(--border-d);
-  background:var(--white);font-family:inherit;font-size:.85rem;font-weight:600;
-  color:var(--text-2);cursor:pointer;transition:all var(--tr);white-space:nowrap;
-}
-.promo-row button:hover{border-color:var(--gold);color:var(--gold-dk)}
-.promo-msg{font-size:.78rem;margin-top:-14px;margin-bottom:16px;font-weight:600}
-.promo-msg.ok{color:var(--green)}
-.promo-msg.err{color:var(--red)}
-
-.submit-order{
-  width:100%;padding:16px;border-radius:var(--r-pill);border:none;
-  background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));
-  color:var(--white);font-family:inherit;font-size:1rem;font-weight:700;
-  cursor:pointer;transition:all var(--tr);
-  box-shadow:0 6px 20px rgba(184,134,11,.3);
-}
-.submit-order:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(184,134,11,.4)}
-.submit-order:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.order-status-msg{
-  margin-top:12px;padding:12px 14px;border-radius:var(--r-md);
-  font-size:.88rem;font-weight:600;text-align:center;
-}
-.order-status-msg.ok{background:rgba(45,106,79,.1);color:var(--green);border:1px solid rgba(45,106,79,.2)}
-.order-status-msg.err{background:rgba(192,57,43,.08);color:var(--red);border:1px solid rgba(192,57,43,.2)}
-
-/* ── CART SIDEBAR ── */
-.cart-overlay{position:fixed;inset:0;background:rgba(26,20,16,.4);z-index:400;opacity:0;pointer-events:none;transition:opacity var(--tr)}
-.cart-overlay.open{opacity:1;pointer-events:auto}
-.cart-panel{
-  position:fixed;top:0;left:0;bottom:0;width:min(420px,100vw);
-  background:var(--white);z-index:401;box-shadow:-8px 0 48px rgba(90,60,20,.15);
-  transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
-  display:flex;flex-direction:column;
-}
-.cart-panel.open{transform:none}
-.cart-head{
-  padding:20px 22px;border-bottom:1px solid var(--cream-d);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.cart-head h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600}
-.cart-close{width:36px;height:36px;border-radius:8px;border:none;background:var(--cream-d);cursor:pointer;font-size:1rem;display:grid;place-items:center;transition:background var(--tr)}
-.cart-close:hover{background:var(--cream-dd)}
-.cart-items{flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:12px}
-.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-3);gap:12px}
-.cart-empty .ce-icon{font-size:3rem}
-.cart-item{
-  display:flex;gap:12px;padding:14px;
-  background:var(--cream);border-radius:var(--r-lg);border:1px solid var(--border);
-}
-.ci-img{
-  width:60px;height:60px;border-radius:10px;overflow:hidden;flex-shrink:0;
-  background:var(--cream-d);display:grid;place-items:center;
-}
-.ci-img img{width:100%;height:100%;object-fit:cover}
-.ci-info{flex:1;min-width:0}
-.ci-name{font-weight:600;font-size:.88rem;color:var(--text)}
-.ci-sub{font-size:.76rem;color:var(--text-3);margin-top:2px}
-.ci-price{font-weight:700;color:var(--gold-dk);margin-top:4px;font-size:.9rem}
-.ci-remove{align-self:flex-start;padding:4px 8px;border:none;background:none;color:var(--text-3);cursor:pointer;font-size:.78rem;border-radius:6px;transition:all var(--tr)}
-.ci-remove:hover{background:rgba(192,57,43,.08);color:var(--red)}
-.cart-foot{
-  padding:18px 22px;border-top:1px solid var(--cream-d);
-  background:var(--cream);
-}
-.cart-total{display:flex;justify-content:space-between;font-weight:700;font-size:1rem;margin-bottom:14px}
-.checkout-btn{
-  width:100%;padding:14px;border-radius:var(--r-pill);border:none;
-  background:linear-gradient(135deg,var(--gold-lt),var(--gold-dk));
-  color:var(--white);font-family:inherit;font-size:.95rem;font-weight:700;
-  cursor:pointer;transition:all var(--tr);
-  box-shadow:0 6px 20px rgba(184,134,11,.25);
-}
-.checkout-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(184,134,11,.35)}
-
-/* ── TOAST ── */
-#toastContainer{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
-.toast{
-  display:flex;align-items:center;gap:10px;padding:13px 18px;
-  border-radius:var(--r-lg);background:var(--text);
-  color:var(--white);font-size:.88rem;font-weight:500;max-width:300px;
-  box-shadow:0 8px 32px rgba(26,20,16,.2);
-  animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both;
-}
-.toast.ok{background:var(--green)}
-.toast.err{background:var(--red)}
-.toast.hiding{animation:toastOut .25s ease both}
-@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
-@keyframes toastOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(6px) scale(.96)}}
-
-/* ── WHATSAPP FLOAT ── */
-.wa-float{
-  position:fixed;bottom:28px;left:28px;z-index:200;
-  display:flex;align-items:center;gap:10px;
-  padding:12px 20px;border-radius:var(--r-pill);
-  background:#25D366;color:var(--white);text-decoration:none;
-  font-weight:700;font-size:.88rem;font-family:inherit;
-  box-shadow:0 8px 28px rgba(37,211,102,.35);
-  transition:transform var(--tr),box-shadow var(--tr);
-}
-.wa-float:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(37,211,102,.45)}
-.wa-icon{width:24px;height:24px;background:rgba(255,255,255,.2);border-radius:50%;display:grid;place-items:center}
-
-/* ── OFFERS SECTION ── */
-.offers-section{max-width:1200px;margin:0 auto;padding:0 24px 48px}
-.offers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-.offer-card{
-  background:linear-gradient(135deg,var(--cream-d),var(--white));
-  border:1.5px solid var(--border-d);border-radius:var(--r-xl);
-  padding:24px;position:relative;overflow:hidden;
-  box-shadow:var(--shadow);transition:transform var(--tr),box-shadow var(--tr);
-  cursor:pointer;
-}
-.offer-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hov)}
-.offer-card::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:140px;height:140px;
-  background:radial-gradient(circle,rgba(184,134,11,.12),transparent 70%);
-  pointer-events:none;
-}
-.offer-badge-tag{
-  display:inline-block;background:var(--gold);color:var(--white);
-  padding:4px 12px;border-radius:var(--r-pill);font-size:.72rem;
-  font-weight:700;margin-bottom:12px;letter-spacing:.04em;
-}
-.offer-card h3{
-  font-family:'Cormorant Garamond',serif;font-size:1.3rem;
-  font-weight:700;color:var(--text);margin-bottom:8px;
-}
-.offer-card p{font-size:.88rem;color:var(--text-2);line-height:1.6;margin-bottom:16px}
-.offer-prices{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
-.offer-price-new{font-size:1.4rem;font-weight:700;color:var(--gold-dk)}
-.offer-price-old{font-size:.9rem;color:var(--text-3);text-decoration:line-through}
-.offer-saving{
-  font-size:.75rem;font-weight:700;color:var(--green);
-  background:rgba(45,106,79,.08);border:1px solid rgba(45,106,79,.15);
-  padding:3px 9px;border-radius:var(--r-pill);
-}
-.offer-btn{
-  width:100%;padding:12px;border-radius:var(--r-pill);border:none;
-  background:var(--text);color:var(--white);
-  font-family:inherit;font-size:.9rem;font-weight:700;
-  cursor:pointer;transition:all var(--tr);
-}
-.offer-btn:hover{background:var(--gold-dk)}
-.offers-empty{display:none}
-
-/* ── FOOTER ── */
-footer{background:var(--text);color:rgba(255,255,255,.7);padding:28px 24px;margin-top:64px}
-.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--white);font-weight:600}
-.footer-links{display:flex;gap:20px;font-size:.82rem}
-.footer-links a{color:rgba(255,255,255,.6);text-decoration:none;transition:color var(--tr)}
-.footer-links a:hover{color:var(--white)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .hero{grid-template-columns:1fr;padding:32px 20px 28px}
-  .hero-visual{display:none}
-  .hero h1{font-size:2.2rem}
-}
-@media(max-width:640px){
-  .trust-item:nth-child(n+3){display:none}
-  .fields-row{grid-template-columns:1fr}
-  .drawer-inner{padding:16px 18px 28px}
-}
-@media(max-width:480px){
-  .header-inner{height:60px}
-  .products-grid{grid-template-columns:repeat(2,1fr);gap:14px}
-  .card-body{padding:12px}
-  .card-name{font-size:1rem}
-  .hbtn span:not(.cart-badge){display:none}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+<div id="tc"></div>
 
-<div id="toastContainer"></div>
-
-<!-- HEADER -->
-<header class="header">
-  <div class="header-inner">
-    <a class="logo" href="#">
-      <span class="logo-mark">S</span>
-      <div>
-        <span class="logo-text">Shahenda Store</span>
-        <span class="logo-sub">عطور فاخرة</span>
-      </div>
-    </a>
-    <div class="header-actions">
-      <a href="https://wa.me/201131356642" target="_blank" rel="noopener" class="hbtn">
-        <span>💬</span><span>واتساب</span>
-      </a>
-      <button class="hbtn cart" id="cartBtn">
-        🛒 <span>السلة</span>
-        <span class="cart-badge" id="cartBadge">0</span>
-      </button>
-    </div>
+<header class="top">
+  <div class="top-in">
+    <div class="logo"><span class="logo-mark">✂</span><span id="shopName">Barber Shop</span></div>
+    <button class="btn btn-line btn-sm" id="trackBtn">📍 تابع حجزي</button>
   </div>
 </header>
+<div class="closed-banner" id="closedBanner">الحجز الأونلاين متوقف مؤقتاً — تواصل معنا على واتساب</div>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-copy">
-    <div class="hero-badge">✨ عطور أصلية 100%</div>
-    <h1>اكتشف عطرك المثالي بأقل <em>سعر</em></h1>
-    <p>أجود العطور العالمية متاحة بالميللي — اختار الحجم اللي يناسبك بالظبط وادفع على حسب.</p>
-    <div class="hero-cta">
-      <a href="#shop" class="btn-primary">🛍️ تسوق دلوقتي</a>
-      <a href="https://wa.me/201131356642" target="_blank" rel="noopener" class="btn-outline">💬 تواصل معنا</a>
-    </div>
-  </div>
-  <div class="hero-visual">
-    <div class="hero-visual-title">أشهر التركيبات</div>
-    <div class="hero-scent-bubbles">
-      <span class="scent-bubble">🌹 روزي</span>
-      <span class="scent-bubble">🌲 وودي</span>
-      <span class="scent-bubble">🍋 فريش</span>
-      <span class="scent-bubble">🕌 عودي</span>
-      <span class="scent-bubble">🌸 فلورال</span>
-      <span class="scent-bubble">🍦 فانيليا</span>
-    </div>
-  </div>
+  <h1>احجز دورك <em>من غير زحمة</em></h1>
+  <p>اختار الحلاق والخدمة، واعرف قدامك كام واحد والوقت المتوقع لدورك قبل ما تيجي.</p>
 </section>
 
-<!-- TRUST BAR -->
-<div class="trust-bar">
-  <div class="trust-inner">
-    <span class="trust-item"><span class="trust-icon">✅</span> عطور أصلية 100%</span>
-    <span class="trust-item"><span class="trust-icon">🚚</span> توصيل لجميع المحافظات</span>
-    <span class="trust-item"><span class="trust-icon">💰</span> كاش عند الاستلام</span>
-    <span class="trust-item"><span class="trust-icon">🔄</span> ضمان جودة أو استرداد</span>
-    <span class="trust-item"><span class="trust-icon">📦</span> تغليف فاخر</span>
+<main class="wrap">
+  <section class="step">
+    <h2><span class="num">1</span> اختار الحلاق</h2>
+    <div class="grid" id="barbers"><div class="empty">⏳ جاري التحميل...</div></div>
+  </section>
+
+  <section class="step">
+    <h2><span class="num">2</span> اختار الخدمة</h2>
+    <div class="tabs">
+      <button class="tab on" data-mode="services">خدمات</button>
+      <button class="tab" data-mode="packages">باكدجات 🎁</button>
+    </div>
+    <div class="grid" id="services"></div>
+    <div class="grid" id="packages" style="display:none"></div>
+  </section>
+
+  <section class="step">
+    <h2><span class="num">3</span> بياناتك</h2>
+    <div class="form">
+      <div class="fg"><label>الاسم *</label><input id="custName" placeholder="اسمك" autocomplete="name"/></div>
+      <div class="fg"><label>رقم الموبايل *</label><input id="custPhone" type="tel" inputmode="tel" placeholder="01xxxxxxxxx" autocomplete="tel"/></div>
+      <div class="fg full"><label>ملاحظات (اختياري)</label><textarea id="custNotes" rows="2" placeholder="مثلاً: فيد جانبي رقم 1..."></textarea></div>
+    </div>
+    <p class="note" style="margin-top:10px">💵 الدفع كاش في المحل بعد الخدمة.</p>
+  </section>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="bar-sum">
+      <div><div class="k">المدة التقديرية</div><div class="v" id="sumDur">—</div></div>
+      <div><div class="k">الإجمالي</div><div class="v" id="sumPrice">—</div></div>
+    </div>
+    <button class="btn btn-gold btn-book" id="bookBtn" disabled>✂ احجز دلوقتي</button>
   </div>
 </div>
 
-<!-- OFFERS SECTION -->
-<div class="offers-section" id="offersSection" style="display:none">
-  <div class="section-head" style="margin-bottom:20px">
-    <div>
-      <h2 class="section-title">🎁 العروض الخاصة</h2>
-      <p class="section-sub">عروض محدودة — اطلب دلوقتي</p>
+<footer>© <span id="yr"></span> <span id="shopName2">Barber Shop</span> · <a href="admin.html">لوحة التحكم</a></footer>
+
+<!-- confirmation -->
+<div class="mo" id="moDone">
+  <div class="mo-box ticket">
+    <div class="ok">✅</div>
+    <h3>تم تأكيد حجزك!</h3>
+    <div class="mut" id="dBarber"></div>
+    <div class="t-no" id="dNo">#1</div>
+    <div class="t-grid">
+      <div class="t-cell hl"><div class="k">قدامك</div><div class="v" id="dAhead">—</div></div>
+      <div class="t-cell hl"><div class="k">دورك تقريباً</div><div class="v" id="dTime">—</div></div>
+      <div class="t-cell"><div class="k">مدة خدمتك</div><div class="v" id="dDur">—</div></div>
+      <div class="t-cell"><div class="k">الإجمالي</div><div class="v" id="dPrice">—</div></div>
     </div>
-  </div>
-  <div class="offers-grid" id="offersGrid"></div>
-</div>
-
-<!-- SHOP SECTION -->
-<section class="section" id="shop">
-  <div class="section-head">
-    <div>
-      <h2 class="section-title">كل المنتجات</h2>
-      <p class="section-sub">اختار العطر وحدد الحجم بالميللي اللي يناسبك</p>
+    <p class="note">الوقت تقديري وبيتغير حسب سرعة الشغل. تقدر تتابع دورك لحظة بلحظة من زر «تابع حجزي».</p>
+    <div class="mo-foot" style="justify-content:center">
+      <button class="btn btn-dark" id="dTrack">📍 تابع دوري</button>
+      <button class="btn btn-line" onclick="closeMo('moDone')">تمام</button>
     </div>
-  </div>
-
-  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-    <div class="search-box">
-      <span style="color:var(--text-3)">🔍</span>
-      <input type="text" id="searchInput" placeholder="ابحث عن عطر..."/>
-    </div>
-  </div>
-
-  <div class="filter-row" id="filterRow">
-    <button class="filter-chip active" data-cat="all">الكل</button>
-    <button class="filter-chip" data-cat="Men / Unisex">رجالي / يونيسكس</button>
-    <button class="filter-chip" data-cat="Women">نسائي</button>
-    <button class="filter-chip" data-cat="Musk / Oud / Special">مسك / عود</button>
-  </div>
-
-  <div class="products-grid" id="productsGrid">
-    <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-3)">
-      <div style="font-size:2rem;margin-bottom:8px">⏳</div>
-      جاري تحميل المنتجات...
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <span class="footer-logo">Shahenda Store</span>
-    <div class="footer-links">
-      <a href="https://wa.me/201131356642" target="_blank">واتساب</a>
-   
-    </div>
-    <span style="font-size:.78rem">© 2025 Shahenda Store. جميع الحقوق محفوظة.</span>
-  </div>
-</footer>
-
-<!-- WhatsApp Float -->
-<a class="wa-float" href="https://wa.me/201131356642" target="_blank" rel="noopener">
-  <span class="wa-icon">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M20.52 3.48C18.22 1.18 15.19 0 12 0 5.37 0 0 5.37 0 12c0 2.12.57 4.19 1.65 5.99L0 24l5.11-1.68A11.92 11.92 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.18-6.22-3.48-8.52zM12 22.06c-1.99 0-3.86-.56-5.49-1.52l-.39-.24-3.03 1 1.01-3.12-.26-.4A9.92 9.92 0 012.06 12 9.94 9.94 0 0112 2.06c2.66 0 5.17 1.04 7.06 2.94A9.94 9.94 0 0121.94 12c0 2.66-1.04 5.17-2.94 7.06A9.93 9.93 0 0112 22.06z"/></svg>
-  </span>
-  واتساب
-</a>
-
-<!-- PRODUCT QUICK-BUY DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-handle"></div>
-  <div class="drawer-inner">
-    <div class="drawer-header">
-      <div class="drawer-img" id="drawerImg"><span style="font-size:2rem">🧴</span></div>
-      <div>
-        <div class="drawer-product-brand" id="drawerBrand"></div>
-        <div class="drawer-product-name" id="drawerName">اختر منتجاً</div>
-        <div class="drawer-product-desc" id="drawerDesc"></div>
-      </div>
-    </div>
-
-    <div class="drawer-section-label">اختر الحجم</div>
-    <div class="size-options" id="sizeOptions"></div>
-
-    <div class="drawer-section-label">الكمية</div>
-    <div class="qty-row">
-      <div class="qty-control">
-        <button class="qty-btn" id="qtyMinus">−</button>
-        <span class="qty-val" id="qtyVal">1</span>
-        <button class="qty-btn" id="qtyPlus">+</button>
-      </div>
-      <div class="qty-total">الإجمالي: <strong id="qtyTotal">0 جنيه</strong></div>
-    </div>
-
-    <div class="drawer-notes">
-      <div class="drawer-section-label" style="margin-bottom:8px">ملاحظات (اختياري)</div>
-      <textarea id="orderNotes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
-    </div>
-
-    <div class="drawer-section-label">بيانات الطلب</div>
-    <div class="customer-fields">
-      <div class="fields-row">
-        <div class="field-group">
-          <label>الاسم *</label>
-          <input type="text" id="custName" placeholder="اسمك"/>
-        </div>
-        <div class="field-group">
-          <label>رقم الهاتف *</label>
-          <input type="tel" id="custPhone" placeholder="01xxxxxxxxx"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>العنوان بالتفصيل *</label>
-        <input type="text" id="custAddress" placeholder="المحافظة، المدينة، الشارع"/>
-      </div>
-    </div>
-
-    <div class="drawer-section-label" style="margin-bottom:8px">كود خصم</div>
-    <div class="promo-row">
-      <input type="text" id="promoInput" placeholder="أدخل الكود"/>
-      <button id="applyPromo">تطبيق</button>
-    </div>
-    <div id="promoMsg" class="promo-msg" style="display:none"></div>
-
-    <div class="drawer-summary">
-      <div class="sum-row"><span>المنتج</span><span id="sumProduct">—</span></div>
-      <div class="sum-row"><span>الحجم</span><span id="sumSize">—</span></div>
-      <div class="sum-row"><span>السعر × الكمية</span><span id="sumSubtotal">—</span></div>
-      <div class="sum-row" id="sumDiscountRow" style="display:none"><span>خصم الكود</span><span id="sumDiscount" style="color:var(--green)">—</span></div>
-      <div class="sum-row"><span>الإجمالي</span><span id="sumTotal">0 جنيه</span></div>
-    </div>
-
-    <button class="submit-order" id="submitOrder">✓ تأكيد الطلب</button>
-    <div id="orderStatusMsg" style="display:none" class="order-status-msg"></div>
   </div>
 </div>
 
-<!-- CART SIDEBAR -->
-<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
-<div class="cart-panel" id="cartPanel">
-  <div class="cart-head">
-    <h2>🛒 سلة المشتريات</h2>
-    <button class="cart-close" onclick="closeCart()">✕</button>
-  </div>
-  <div class="cart-items" id="cartItems">
-    <div class="cart-empty"><span class="ce-icon">🛒</span><span>السلة فارغة</span></div>
-  </div>
-  <div class="cart-foot" id="cartFoot" style="display:none">
-    <div class="cart-total"><span>الإجمالي</span><span id="cartTotal">0 جنيه</span></div>
-    <button class="checkout-btn" id="checkoutBtn">متابعة الطلب</button>
+<!-- tracking -->
+<div class="mo" id="moTrack">
+  <div class="mo-box">
+    <div class="mo-head"><h2>📍 متابعة الحجز</h2><button class="mo-x" onclick="closeMo('moTrack')">✕</button></div>
+    <div style="display:flex;gap:8px">
+      <input id="trkPhone" type="tel" inputmode="tel" placeholder="رقم الموبايل اللي حجزت بيه" style="flex:1;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font-size:.92rem;outline:none"/>
+      <button class="btn btn-dark btn-sm" id="trkGo">اعرض</button>
+    </div>
+    <div id="trkList"></div>
   </div>
 </div>
 
