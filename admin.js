@@ -63,7 +63,7 @@ async function loadAll() {
     sb.from('bookings').select('*').eq('booking_date', todayStr()).order('id'),
     sb.from('settings').select('*'),
   ]);
-  if (b.error) { toast('خطأ في التحميل: ' + b.error.message, 'err', 5000); return; }
+  if (b.error) { console.error('load error', b.error); toast('تعذر تحميل البيانات، يرجى إعادة المحاولة', 'err', 5000); return; }
   barbers = b.data || []; services = s.data || []; packages = p.data || []; todayBk = bk.data || [];
   settings = Object.fromEntries((st.data || []).map(r => [r.key, r.value]));
   $('admName').textContent = settings.shop_name || 'Barber Shop';
@@ -103,8 +103,8 @@ function renderQueue() {
     const list = active.filter(x => x.barber_id === g.id);
     const wait = list.reduce((s, x) => s + remaining(x), 0);
     return `<div class="col">
-      <div class="col-h"><b>💈 ${esc(g.name)}</b><span>${list.length} في الانتظار · ${list.length ? 'يخلص بعد ' + durTxt(wait) : 'فاضي'}</span></div>
-      <div class="col-b">${list.length ? list.map(qItem).join('') : '<div class="q-empty">مفيش حد في الانتظار ✅</div>'}</div></div>`;
+      <div class="col-h"><b>💈 ${esc(g.name)}</b><span>${list.length} في الانتظار · ${list.length ? 'يخلص بعد ' + durTxt(wait) : 'متاح'}</span></div>
+      <div class="col-b">${list.length ? list.map(qItem).join('') : '<div class="q-empty">لا يوجد أحد في الانتظار</div>'}</div></div>`;
   }).join('');
 }
 
