@@ -15,7 +15,7 @@ const dur = m => {
   return (h === 1 ? 'ساعة' : h === 2 ? 'ساعتين' : `${h} ساعات`) + (r ? ` و${r} دقيقة` : '');
 };
 const clock = min => new Date(Date.now() + min * 60000).toLocaleTimeString('ar-EG', { hour: 'numeric', minute: '2-digit' });
-const aheadTxt = n => n === 0 ? 'مفيش حد — إنت الأول' : n === 1 ? 'شخص واحد' : n === 2 ? 'شخصين' : `${n} أشخاص`;
+const aheadTxt = n => n === 0 ? 'لا يوجد أحد قبلك' : n === 1 ? 'شخص واحد' : n === 2 ? 'شخصين' : `${n} أشخاص`;
 
 function toast(msg, type = '', ms = 3200) {
   const t = document.createElement('div');
@@ -47,7 +47,7 @@ async function loadAll() {
   ]);
   if (b.error || s.error) {
     console.error('load error', b.error || s.error);
-    $('barbers').innerHTML = '<div class="empty">⚠️ الخدمة غير متاحة حالياً.<br>يرجى المحاولة بعد قليل أو التواصل معنا مباشرة.</div>';
+    $('barbers').innerHTML = '<div class="empty">الخدمة غير متاحة حالياً.<br>يرجى المحاولة بعد قليل أو التواصل معنا مباشرة.</div>';
     return;
   }
   barbers = b.data || []; services = s.data || []; packages = p.data || [];
@@ -66,22 +66,22 @@ async function loadQueue() {
 function applySettings() {
   const name = settings.shop_name || 'Barber Shop';
   $('shopName').textContent = name; $('shopName2').textContent = name;
-  document.title = `احجز عند ${name}`;
+  document.title = `حجز موعد | ${name}`;
   $('closedBanner').style.display = settings.accepting === 'false' ? 'block' : 'none';
 }
 
 /* ══ RENDER ══ */
 function renderBarbers() {
-  if (!barbers.length) { $('barbers').innerHTML = '<div class="empty">لا يوجد حلاقين متاحين حالياً</div>'; return; }
+  if (!barbers.length) { $('barbers').innerHTML = '<div class="empty">لا يوجد حلاقون متاحون حالياً</div>'; return; }
   const waits = barbers.map(b => queue[b.id] || { ahead: 0, wait_min: 0 });
   const best = waits.reduce((a, c) => c.wait_min < a.wait_min ? c : a, waits[0]);
   const pill = q => q.ahead === 0
     ? '<span class="q-pill">متاح الآن</span>'
-    : `<span class="q-pill busy">قدامك ${q.ahead} · حوالي ${dur(q.wait_min)}</span>`;
+    : `<span class="q-pill busy">قبلك ${q.ahead} · حوالي ${dur(q.wait_min)}</span>`;
 
   const any = `<div class="card ${selBarber === 'any' ? 'sel' : ''}" onclick="pickBarber('any')">
-    <div class="avatar">⚡</div><div class="c-name">أي حلاق متاح</div>
-    <div class="c-sub">هنحجزلك عند الأسرع</div>${pill(best)}</div>`;
+    <div class="avatar">أي</div><div class="c-name">أي حلاق متاح</div>
+    <div class="c-sub">الحجز عند الأسرع</div>${pill(best)}</div>`;
 
   $('barbers').innerHTML = any + barbers.map(b => {
     const q = queue[b.id] || { ahead: 0, wait_min: 0 };
@@ -95,17 +95,17 @@ function renderServices() {
   $('services').innerHTML = services.length ? services.map(s => `
     <div class="card svc ${selServices.has(s.id) ? 'sel' : ''}" onclick="toggleService(${s.id})">
       <div class="row"><span class="c-name">${esc(s.name)}</span><span class="p">${EGP(s.price)}</span></div>
-      <div class="d">⏱ ${dur(s.duration_min)}</div></div>`).join('')
+      <div class="d">${dur(s.duration_min)}</div></div>`).join('')
     : '<div class="empty">لا توجد خدمات</div>';
 }
 
 function renderPackages() {
   $('packages').innerHTML = packages.length ? packages.map(p => `
     <div class="card svc ${selPackage === p.id ? 'sel' : ''}" onclick="pickPackage(${p.id})">
-      <span class="badge-pk">🎁 باكدج</span>
+      <span class="badge-pk">باكدج</span>
       <div class="row"><span class="c-name">${esc(p.name)}</span></div>
       <div class="d">${esc(p.description || '')}</div>
-      <div class="row"><span class="d">⏱ ${dur(p.duration_min)}</span>
+      <div class="row"><span class="d">${dur(p.duration_min)}</span>
         <span class="p">${EGP(p.price)}${p.old_price ? `<span class="old">${EGP(p.old_price)}</span>` : ''}</span></div></div>`).join('')
     : '<div class="empty">لا توجد باكدجات حالياً</div>';
 }
@@ -140,17 +140,17 @@ function updateBar() {
   $('sumDur').textContent = c ? dur(c.dur) : '—';
   $('sumPrice').textContent = c ? EGP(c.price) : '—';
   $('bookBtn').disabled = !c || selBarber === undefined || settings.accepting === 'false';
-  $('bookBtn').textContent = selBarber === undefined ? 'اختار الحلاق الأول' : !c ? 'اختار خدمة' : '✂ احجز دلوقتي';
+  $('bookBtn').textContent = selBarber === undefined ? 'اختر الحلاق أولاً' : !c ? 'اختر خدمة' : 'تأكيد الحجز';
 }
 
 /* ══ BOOK ══ */
 $('bookBtn').addEventListener('click', async () => {
   const name = $('custName').value.trim();
   const phone = $('custPhone').value.replace(/[\s-]/g, '');
-  if (!name) { toast('ادخل اسمك', 'err'); $('custName').focus(); return; }
-  if (!/^\+?\d{10,14}$/.test(phone)) { toast('رقم الموبايل غير صحيح', 'err'); $('custPhone').focus(); return; }
+  if (!name) { toast('أدخل الاسم', 'err'); $('custName').focus(); return; }
+  if (!/^\+?\d{10,14}$/.test(phone)) { toast('رقم الهاتف غير صحيح', 'err'); $('custPhone').focus(); return; }
 
-  const btn = $('bookBtn'); btn.disabled = true; btn.textContent = '⏳ جاري الحجز...';
+  const btn = $('bookBtn'); btn.disabled = true; btn.textContent = 'جاري الحجز...';
   const { data, error } = await sb.rpc('create_booking', {
     p_name: name, p_phone: phone,
     p_barber: selBarber === 'any' ? null : selBarber,
@@ -158,13 +158,13 @@ $('bookBtn').addEventListener('click', async () => {
     p_package_id: mode === 'packages' ? selPackage : null,
     p_notes: $('custNotes').value.trim() || null,
   });
-  if (error) { toast(error.message || 'حصل خطأ، حاول تاني', 'err', 4500); updateBar(); return; }
+  if (error) { toast(error.message || 'حدث خطأ، حاول مرة أخرى', 'err', 4500); updateBar(); return; }
 
   try { localStorage.setItem('bb_phone', phone); } catch (e) {}
-  $('dBarber').textContent = `عند الحلاق ${data.barber_name}`;
+  $('dBarber').textContent = `الحلاق: ${data.barber_name}`;
   $('dNo').textContent = `#${data.ticket_no}`;
   $('dAhead').textContent = aheadTxt(data.ahead);
-  $('dTime').textContent = data.wait_min === 0 ? 'دلوقتي' : clock(data.wait_min);
+  $('dTime').textContent = data.wait_min === 0 ? 'الآن' : clock(data.wait_min);
   $('dDur').textContent = dur(data.duration_min);
   $('dPrice').textContent = EGP(data.price);
   openMo('moDone');
@@ -194,10 +194,10 @@ async function track() {
   $('trkList').innerHTML = data.length ? data.map(b => {
     const names = (b.items || []).map(i => esc(i.name)).join(' + ');
     const body = b.status === 'in_service'
-      ? '<b style="color:var(--green)">دورك دلوقتي ✂️ — إنت على الكرسي</b>'
+      ? '<b style="color:var(--green)">دورك الآن</b>'
       : b.ahead === 0
-        ? '<b>إنت التالي! جهّز نفسك 🔔</b>'
-        : `قدامك <b>${aheadTxt(b.ahead)}</b><br>دورك تقريباً الساعة <b>${clock(b.wait_min)}</b> (بعد حوالي ${dur(b.wait_min)})`;
+        ? '<b>أنت التالي</b>'
+        : `قبلك <b>${aheadTxt(b.ahead)}</b><br>دورك تقريباً الساعة <b>${clock(b.wait_min)}</b> (بعد حوالي ${dur(b.wait_min)})`;
     return `<div class="trk">
       <div class="trk-top"><span class="trk-no">#${b.ticket_no} · ${esc(b.barber_name || '')}</span>
         <span class="st ${b.status}">${b.status === 'in_service' ? 'شغّال' : 'في الانتظار'}</span></div>
@@ -205,16 +205,16 @@ async function track() {
       <div style="margin-top:8px;font-size:.9rem;line-height:1.7">${body}</div>
       ${b.status === 'waiting' ? `<button class="btn btn-red btn-sm" style="margin-top:10px" onclick="cancelBk(${b.id})">إلغاء الحجز</button>` : ''}
     </div>`;
-  }).join('') : '<div class="empty" style="padding:24px 0 8px">مفيش حجوزات نشطة النهارده على الرقم ده</div>';
+  }).join('') : '<div class="empty" style="padding:24px 0 8px">لا توجد حجوزات نشطة اليوم على هذا الرقم</div>';
 
   clearInterval(trkTimer);
   trkTimer = setInterval(() => { $('moTrack').classList.contains('open') ? track() : clearInterval(trkTimer); }, 20000);
 }
 
 window.cancelBk = async id => {
-  if (!confirm('متأكد إنك عايز تلغي الحجز؟')) return;
+  if (!confirm('هل تريد إلغاء الحجز؟')) return;
   const { data } = await sb.rpc('cancel_booking', { p_id: id, p_phone: $('trkPhone').value.replace(/[\s-]/g, '') });
-  toast(data ? 'تم إلغاء الحجز' : 'مينفعش الإلغاء دلوقتي', data ? 'ok' : 'err');
+  toast(data ? 'تم إلغاء الحجز' : 'لا يمكن إلغاء الحجز الآن', data ? 'ok' : 'err');
   track(); loadQueue();
 };
 
