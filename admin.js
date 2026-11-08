@@ -97,13 +97,13 @@ function renderQueue() {
 
   const groups = barbers.filter(b => b.active || active.some(x => x.barber_id === b.id));
   if (active.some(x => !x.barber_id)) groups.push({ id: null, name: 'بدون حلاق' });
-  if (!groups.length) { $('board').innerHTML = '<div class="q-empty">أضف حلاقين من تبويب «الحلاقين» الأول</div>'; return; }
+  if (!groups.length) { $('board').innerHTML = '<div class="q-empty">أضف حلاقين من تبويب الحلاقين أولاً</div>'; return; }
 
   $('board').innerHTML = groups.map(g => {
     const list = active.filter(x => x.barber_id === g.id);
     const wait = list.reduce((s, x) => s + remaining(x), 0);
     return `<div class="col">
-      <div class="col-h"><b>💈 ${esc(g.name)}</b><span>${list.length} في الانتظار · ${list.length ? 'يخلص بعد ' + durTxt(wait) : 'متاح'}</span></div>
+      <div class="col-h"><b>${esc(g.name)}</b><span>${list.length} في الانتظار · ${list.length ? 'يخلص بعد ' + durTxt(wait) : 'متاح'}</span></div>
       <div class="col-b">${list.length ? list.map(qItem).join('') : '<div class="q-empty">لا يوجد أحد في الانتظار</div>'}</div></div>`;
   }).join('');
 }
@@ -114,13 +114,13 @@ function qItem(b) {
     ? `<button class="btn btn-green btn-sm" onclick="setStatus(${b.id},'in_service')">▶ ابدأ</button>
        <button class="btn btn-red btn-sm" onclick="setStatus(${b.id},'cancelled')">✕</button>
        <button class="btn btn-line btn-sm" onclick="setStatus(${b.id},'no_show')">ما جاش</button>`
-    : `<button class="btn btn-green btn-sm" onclick="setStatus(${b.id},'done')">✓ تم</button>`;
+    : `<button class="btn btn-green btn-sm" onclick="setStatus(${b.id},'done')">تم</button>`;
   return `<div class="q-item ${b.status}">
     <div class="q-no">#${b.ticket_no}</div>
     <div class="q-body"><b>${esc(b.customer_name)}</b>${b.customer_phone && b.customer_phone !== '—' ? `<a href="tel:${esc(b.customer_phone)}">${esc(b.customer_phone)}</a>` : ''}
       <div class="mut">${names}</div>
-      <div class="mut">⏱ ${durTxt(b.duration_min)} · <span class="gold">${EGP(b.price)}</span> · حجز ${tm(b.created_at)}</div>
-      ${b.notes ? `<div class="mut">📝 ${esc(b.notes)}</div>` : ''}</div>
+      <div class="mut">${durTxt(b.duration_min)} · <span class="gold">${EGP(b.price)}</span> · حجز ${tm(b.created_at)}</div>
+      ${b.notes ? `<div class="mut">${esc(b.notes)}</div>` : ''}</div>
     <div class="q-act">${acts}</div></div>`;
 }
 
@@ -129,7 +129,7 @@ window.setStatus = async (id, status) => {
   if (status === 'in_service') patch.started_at = new Date().toISOString();
   const { error } = await sb.from('bookings').update(patch).eq('id', id);
   if (error) { toast('تعذر التحديث', 'err'); return; }
-  toast(status === 'done' ? 'تم ✓' : status === 'in_service' ? 'بدأت الخدمة' : 'تم التحديث', 'ok');
+  toast(status === 'done' ? 'تم ' : status === 'in_service' ? 'بدأت الخدمة' : 'تم التحديث', 'ok');
   loadToday();
 };
 $('btnRefresh').addEventListener('click', loadAll);
@@ -145,14 +145,14 @@ $('btnWalk').addEventListener('click', () => {
 $('btnSaveWalk').addEventListener('click', async () => {
   const ids = [...document.querySelectorAll('#wServices input:checked')].map(i => Number(i.value));
   const pack = $('wPack').value ? Number($('wPack').value) : null;
-  if (!pack && !ids.length) { toast('اختار خدمة أو باكدج', 'err'); return; }
+  if (!pack && !ids.length) { toast('اختر خدمة أو باكدج', 'err'); return; }
   const { error } = await sb.rpc('create_booking', {
     p_name: $('wName').value.trim() || 'عميل بالمحل', p_phone: $('wPhone').value.trim() || '—',
     p_barber: $('wBarber').value ? Number($('wBarber').value) : null,
     p_service_ids: pack ? [] : ids, p_package_id: pack, p_notes: null,
   });
   if (error) { toast(error.message, 'err', 4500); return; }
-  closeMo('moWalk'); toast('تمت الإضافة للطابور ✓', 'ok'); loadToday();
+  closeMo('moWalk'); toast('تمت الإضافة للطابور ', 'ok'); loadToday();
 });
 
 /* ══ HISTORY ══ */
@@ -202,8 +202,8 @@ function renderLists() {
     const list = DATA()[key];
     $('list-' + key).innerHTML = list.length ? list.map(r => `<tr>${CFG[key].row(r)}
       <td><input type="checkbox" class="tog" ${r.active ? 'checked' : ''} onchange="toggleActive('${key}',${r.id},this.checked)"/></td>
-      <td class="r"><button class="btn btn-line btn-sm" onclick="editItem('${key}',${r.id})">✏️ تعديل</button>
-        <button class="btn btn-red btn-sm" onclick="delItem('${key}',${r.id})">🗑</button></td></tr>`).join('')
+      <td class="r"><button class="btn btn-line btn-sm" onclick="editItem('${key}',${r.id})">تعديل</button>
+        <button class="btn btn-red btn-sm" onclick="delItem('${key}',${r.id})">حذف</button></td></tr>`).join('')
       : `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--ink3)">لا يوجد — أضف أول ${CFG[key].label}</td></tr>`;
   }
 }
@@ -213,7 +213,7 @@ window.toggleActive = async (key, id, v) => {
   DATA()[key].find(r => r.id === id).active = v; toast(v ? 'تم الإظهار' : 'تم الإخفاء');
 };
 window.delItem = async (key, id) => {
-  if (!confirm('متأكد من الحذف؟ (الأفضل تخفيه بدل ما تحذفه)')) return;
+  if (!confirm('هل تريد الحذف؟ يفضل الإخفاء بدلاً من الحذف.')) return;
   const { error } = await sb.from(key).delete().eq('id', id);
   if (error) { toast('تعذر الحذف', 'err'); return; }
   toast('تم الحذف'); loadAll();
@@ -240,7 +240,7 @@ $('btnSaveItem').addEventListener('click', async () => {
   const q = id ? sb.from(key).update(payload).eq('id', id) : sb.from(key).insert([payload]);
   const { error } = await q;
   if (error) { toast('خطأ: ' + error.message, 'err', 4500); return; }
-  closeMo('moItem'); toast('تم الحفظ ✓', 'ok'); loadAll();
+  closeMo('moItem'); toast('تم الحفظ ', 'ok'); loadAll();
 });
 
 /* ══ SETTINGS ══ */
@@ -257,7 +257,7 @@ $('btnSaveSet').addEventListener('click', async () => {
   ];
   const { error } = await sb.from('settings').upsert(rows);
   if (error) { toast('تعذر الحفظ', 'err'); return; }
-  toast('تم حفظ الإعدادات ✓', 'ok'); loadAll();
+  toast('تم حفظ الإعدادات ', 'ok'); loadAll();
 });
 
 /* ══ INIT ══ */
