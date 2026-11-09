@@ -32,6 +32,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') document.que
 /* ── State ── */
 let barbers = [], services = [], packages = [], queue = {};
 let settings = {};
+let maxPeople = 5;
 let selBarber = undefined;          // undefined = لسه، 'any' = أي حلاق، رقم = حلاق محدد
 let mode = 'services';
 let selServices = new Set();
@@ -54,7 +55,7 @@ async function loadAll() {
   settings = Object.fromEntries((st.data || []).map(r => [r.key, r.value]));
   applySettings();
   await loadQueue();
-  renderServices(); renderPackages(); updateBar();
+  renderServices(); renderPackages(); updateBar(); loadGallery();
 }
 
 async function loadQueue() {
@@ -68,6 +69,11 @@ function applySettings() {
   $('shopName').textContent = name; $('shopName2').textContent = name;
   document.title = `حجز موعد | ${name}`;
   $('closedBanner').style.display = settings.accepting === 'false' ? 'block' : 'none';
+  maxPeople = Math.min(10, Math.max(1, Number(settings.max_people) || 5));
+  const sel = $('custPeople'), cur = Number(sel.value) || 1;
+  sel.innerHTML = Array.from({ length: maxPeople }, (_, i) => `<option value="${i + 1}">${i === 0 ? 'شخص واحد' : i === 1 ? 'شخصان' : (i + 1) + ' أشخاص'}</option>`).join('');
+  sel.value = Math.min(cur, maxPeople);
+  $('peopleRow').style.display = maxPeople > 1 ? '' : 'none';
 }
 
 /* ══ RENDER ══ */
@@ -126,13 +132,21 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   updateBar();
 }));
 
-function current() {
+const people = () => Math.max(1, Number($('custPeople').value) || 1);
+function current0() {
   if (mode === 'packages') {
     const p = packages.find(x => x.id === selPackage);
     return p ? { dur: p.duration_min, price: Number(p.price) } : null;
   }
   const list = services.filter(s => selServices.has(s.id));
   return list.length ? { dur: list.reduce((a, s) => a + s.duration_min, 0), price: list.reduce((a, s) => a + Number(s.price), 0) } : null;
+}
+
+function current() {
+  const c = current0();
+  if (!c) return c;
+  const n = people();
+  return { dur: c.dur * n, price: c.price * n };
 }
 
 function updateBar() {
@@ -157,11 +171,12 @@ $('bookBtn').addEventListener('click', async () => {
     p_service_ids: mode === 'services' ? [...selServices] : [],
     p_package_id: mode === 'packages' ? selPackage : null,
     p_notes: $('custNotes').value.trim() || null,
+    p_people: people(),
   });
   if (error) { toast(error.message || 'حدث خطأ، حاول مرة أخرى', 'err', 4500); updateBar(); return; }
 
   try { localStorage.setItem('bb_phone', phone); } catch (e) {}
-  $('dBarber').textContent = `الحلاق: ${data.barber_name}`;
+  $('dBarber').textContent = `الحلاق: ${data.barber_name}${data.people > 1 ? ` · ${data.people} أشخاص` : ''}`;
   $('dNo').textContent = `#${data.ticket_no}`;
   $('dAhead').textContent = aheadTxt(data.ahead);
   $('dTime').textContent = data.wait_min === 0 ? 'الآن' : clock(data.wait_min);
@@ -201,7 +216,7 @@ async function track() {
     return `<div class="trk">
       <div class="trk-top"><span class="trk-no">#${b.ticket_no} · ${esc(b.barber_name || '')}</span>
         <span class="st ${b.status}">${b.status === 'in_service' ? 'شغّال' : 'في الانتظار'}</span></div>
-      <div class="mut">${names} · ${EGP(b.price)}</div>
+      <div class="mut">${names}${b.people > 1 ? ` × ${b.people} أشخاص` : ''} · ${EGP(b.price)}</div>
       <div style="margin-top:8px;font-size:.9rem;line-height:1.7">${body}</div>
       ${b.status === 'waiting' ? `<button class="btn btn-red btn-sm" style="margin-top:10px" onclick="cancelBk(${b.id})">إلغاء الحجز</button>` : ''}
     </div>`;
@@ -218,9 +233,19 @@ window.cancelBk = async id => {
   track(); loadQueue();
 };
 
+/* ══ GALLERY ══ */
+async function loadGallery() {
+  const { data, error } = await sb.from('gallery').select('*').order('sort').order('id');
+  if (error || !data || !data.length) return;
+  $('galRow').innerHTML = data.map(g => `<img src="${esc(g.image_url)}" alt="" loading="lazy" onclick="openImg(this.src)"/>`).join('');
+  $('gallerySec').style.display = '';
+}
+window.openImg = src => { $('lbImg').src = src; openMo('moImg'); };
+
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', () => {
   $('yr').textContent = new Date().getFullYear();
+  $('custPeople').addEventListener('change', updateBar);
   loadAll();
   setInterval(loadQueue, 30000);
 });
