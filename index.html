@@ -145,6 +145,13 @@ footer a:hover{text-decoration:underline}
   .hero h1{font-size:1.4rem}
 }
 
+
+.gal{max-width:1100px;margin:24px auto 0;padding:0 20px}
+.gal h2{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.gal-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.gal-row img{height:150px;width:220px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:pointer;flex:none}
+.mo-box.lb{max-width:900px;padding:6px;background:transparent;border:none}
+.lb img{display:block;max-width:100%;max-height:85vh;margin:0 auto;border-radius:6px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -162,6 +169,8 @@ footer a:hover{text-decoration:underline}
   <h1>احجز موعدك</h1>
   <p>اختر الحلاق والخدمة، وتابع دورك وعدد المنتظرين قبل وصولك.</p>
 </section>
+
+<section class="gal" id="gallerySec" style="display:none"><h2>صور المكان</h2><div class="gal-row" id="galRow"></div></section>
 
 <main class="wrap">
   <section class="step">
@@ -184,9 +193,10 @@ footer a:hover{text-decoration:underline}
     <div class="form">
       <div class="fg"><label>الاسم *</label><input id="custName" autocomplete="name"/></div>
       <div class="fg"><label>رقم الهاتف *</label><input id="custPhone" type="tel" inputmode="tel" placeholder="01xxxxxxxxx" autocomplete="tel"/></div>
+      <div class="fg" id="peopleRow"><label>عدد الأشخاص</label><select id="custPeople"><option value="1">شخص واحد</option></select></div>
       <div class="fg full"><label>ملاحظات (اختياري)</label><textarea id="custNotes" rows="2"></textarea></div>
     </div>
-    <p class="note" style="margin-top:8px">الدفع نقداً في المحل بعد الخدمة.</p>
+    <p class="note" style="margin-top:8px">الدفع نقداً في المحل بعد الخدمة. عند اختيار أكثر من شخص تُحسب المدة والسعر لكل الأشخاص بنفس الخدمات.</p>
   </section>
 </main>
 
@@ -233,6 +243,8 @@ footer a:hover{text-decoration:underline}
     <div id="trkList"></div>
   </div>
 </div>
+
+<div class="mo" id="moImg"><div class="mo-box lb"><img id="lbImg" alt="" onclick="closeMo('moImg')"/></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="store.js"></script>
