@@ -67,7 +67,7 @@ async function loadAll() {
   barbers = b.data || []; services = s.data || []; packages = p.data || []; todayBk = bk.data || [];
   settings = Object.fromEntries((st.data || []).map(r => [r.key, r.value]));
   $('admName').textContent = settings.shop_name || 'Barber Shop';
-  renderQueue(); renderLists(); renderSettings();
+  renderQueue(); renderLists(); renderSettings(); loadGallery();
 }
 async function loadToday() {
   const { data } = await sb.from('bookings').select('*').eq('booking_date', todayStr()).order('id');
@@ -118,7 +118,7 @@ function qItem(b) {
   return `<div class="q-item ${b.status}">
     <div class="q-no">#${b.ticket_no}</div>
     <div class="q-body"><b>${esc(b.customer_name)}</b>${b.customer_phone && b.customer_phone !== '—' ? `<a href="tel:${esc(b.customer_phone)}">${esc(b.customer_phone)}</a>` : ''}
-      <div class="mut">${names}</div>
+      <div class="mut">${names}${b.people > 1 ? ` · ${b.people} أشخاص` : ''}</div>
       <div class="mut">${durTxt(b.duration_min)} · <span class="gold">${EGP(b.price)}</span> · حجز ${tm(b.created_at)}</div>
       ${b.notes ? `<div class="mut">${esc(b.notes)}</div>` : ''}</div>
     <div class="q-act">${acts}</div></div>`;
@@ -136,7 +136,7 @@ $('btnRefresh').addEventListener('click', loadAll);
 
 /* ══ WALK-IN ══ */
 $('btnWalk').addEventListener('click', () => {
-  $('wName').value = ''; $('wPhone').value = '';
+  $('wName').value = ''; $('wPhone').value = ''; $('wPeople').value = 1;
   $('wBarber').innerHTML = '<option value="">الأسرع (تلقائي)</option>' + barbers.filter(b => b.active).map(b => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
   $('wPack').innerHTML = '<option value="">— بدون —</option>' + packages.filter(p => p.active).map(p => `<option value="${p.id}">${esc(p.name)} (${EGP(p.price)})</option>`).join('');
   $('wServices').innerHTML = services.filter(s => s.active).map(s => `<label><input type="checkbox" value="${s.id}"/> ${esc(s.name)} — ${EGP(s.price)} · ${durTxt(s.duration_min)}</label>`).join('');
@@ -150,6 +150,7 @@ $('btnSaveWalk').addEventListener('click', async () => {
     p_name: $('wName').value.trim() || 'عميل بالمحل', p_phone: $('wPhone').value.trim() || '—',
     p_barber: $('wBarber').value ? Number($('wBarber').value) : null,
     p_service_ids: pack ? [] : ids, p_package_id: pack, p_notes: null,
+    p_people: Math.max(1, Number($('wPeople').value) || 1),
   });
   if (error) { toast(error.message, 'err', 4500); return; }
   closeMo('moWalk'); toast('تمت الإضافة للطابور ', 'ok'); loadToday();
@@ -169,7 +170,7 @@ async function loadHistory() {
     <td>#${b.ticket_no}</td>
     <td><b>${esc(b.customer_name)}</b><div class="mut" style="direction:ltr;text-align:right">${esc(b.customer_phone)}</div></td>
     <td>${esc(b.barber_name || '—')}</td>
-    <td>${(b.items || []).map(i => esc(i.name)).join(' + ')}</td>
+    <td>${(b.items || []).map(i => esc(i.name)).join(' + ')}${b.people > 1 ? ` <span class="mut">× ${b.people} أشخاص</span>` : ''}</td>
     <td>${durTxt(b.duration_min)}</td><td class="gold">${EGP(b.price)}</td>
     <td><span class="st ${b.status}">${STATUS[b.status]}</span></td></tr>`).join('')
     : '<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--ink3)">لا توجد حجوزات في اليوم ده</td></tr>';
@@ -304,17 +305,71 @@ function renderSettings() {
   $('setName').value = settings.shop_name || '';
   $('setWa').value = settings.whatsapp || '';
   $('setAcc').checked = settings.accepting !== 'false';
+  $('setMax').value = settings.max_people || 5;
 }
 $('btnSaveSet').addEventListener('click', async () => {
   const rows = [
     { key: 'shop_name', value: $('setName').value.trim() || 'Barber Shop' },
     { key: 'whatsapp', value: $('setWa').value.trim() },
     { key: 'accepting', value: $('setAcc').checked ? 'true' : 'false' },
+    { key: 'max_people', value: String(Math.min(10, Math.max(1, Number($('setMax').value) || 5))) },
   ];
   const { error } = await sb.from('settings').upsert(rows);
   if (error) { toast('تعذر الحفظ', 'err'); return; }
   toast('تم حفظ الإعدادات ', 'ok'); loadAll();
 });
+
+/* ══ GALLERY ══ */
+let gallery = [];
+async function loadGallery() {
+  const { data } = await sb.from('gallery').select('*').order('sort').order('id');
+  gallery = data || []; renderGallery();
+}
+function renderGallery() {
+  $('galList').innerHTML = gallery.length
+    ? gallery.map(g => `<div class="gal-it"><img src="${esc(g.image_url)}" alt="" loading="lazy"/><button class="btn btn-red btn-sm" onclick="delPhoto(${g.id})">حذف</button></div>`).join('')
+    : '<div class="q-empty" style="grid-column:1/-1">لا توجد صور بعد</div>';
+}
+async function resizeMax(file, max = 1280) {
+  const img = await new Promise((res, rej) => {
+    const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file);
+  });
+  const r = Math.min(1, max / Math.max(img.width, img.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  URL.revokeObjectURL(img.src);
+  return new Promise(res => c.toBlob(res, 'image/jpeg', 0.82));
+}
+$('btnAddPhotos').addEventListener('click', () => $('galFile').click());
+$('galFile').addEventListener('change', async () => {
+  const files = [...$('galFile').files]; if (!files.length) return;
+  const btn = $('btnAddPhotos'); btn.disabled = true; let ok = 0;
+  for (let i = 0; i < files.length; i++) {
+    btn.textContent = `جاري الرفع ${i + 1}/${files.length}`;
+    try {
+      const blob = await resizeMax(files[i]);
+      const path = `${Date.now()}-${i}.jpg`;
+      const up = await sb.storage.from('gallery').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+      if (up.error) throw up.error;
+      const url = sb.storage.from('gallery').getPublicUrl(path).data.publicUrl;
+      const ins = await sb.from('gallery').insert([{ image_url: url }]);
+      if (ins.error) throw ins.error;
+      ok++;
+    } catch (e) { console.error('gallery upload', e); }
+  }
+  btn.disabled = false; btn.textContent = 'إضافة صور'; $('galFile').value = '';
+  toast(ok === files.length ? 'تم رفع الصور' : `تم رفع ${ok} من ${files.length}`, ok === files.length ? 'ok' : 'err', 4000);
+  loadGallery();
+});
+window.delPhoto = async id => {
+  if (!confirm('هل تريد حذف الصورة؟')) return;
+  const g = gallery.find(x => x.id === id);
+  const { error } = await sb.from('gallery').delete().eq('id', id);
+  if (error) { toast('تعذر الحذف', 'err'); return; }
+  if (g) sb.storage.from('gallery').remove([g.image_url.split('/gallery/').pop()]);
+  toast('تم الحذف'); loadGallery();
+};
 
 /* ══ INIT ══ */
 (async () => {
