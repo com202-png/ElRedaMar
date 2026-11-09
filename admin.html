@@ -209,6 +209,18 @@ input[type=date].btn{color-scheme:dark}
   .stats{grid-template-columns:repeat(2,1fr)}
 }
 
+
+.gal{max-width:1100px;margin:24px auto 0;padding:0 20px}
+.gal h2{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.gal-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.gal-row img{height:150px;width:220px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:pointer;flex:none}
+.mo-box.lb{max-width:900px;padding:6px;background:transparent;border:none}
+.lb img{display:block;max-width:100%;max-height:85vh;margin:0 auto;border-radius:6px;cursor:pointer}
+
+.gal-adm{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.gal-it{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.gal-it img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.gal-it .btn{position:absolute;top:6px;left:6px;background:#1c1c1c}
 </style>
 </head>
 <body>
@@ -236,6 +248,7 @@ input[type=date].btn{color-scheme:dark}
     <button class="nav" data-tab="barbers">الحلاقين</button>
     <button class="nav" data-tab="services">الخدمات والأسعار</button>
     <button class="nav" data-tab="packages">الباكدجات</button>
+    <button class="nav" data-tab="gallery">صور المكان</button>
     <button class="nav" data-tab="settings">الإعدادات</button>
   </nav>
   <div class="sb-foot">
@@ -304,12 +317,20 @@ input[type=date].btn{color-scheme:dark}
     <div class="tbl-w"><table class="tbl"><thead><tr><th>الباكدج</th><th>السعر</th><th>الوقت</th><th>ظاهر</th><th></th></tr></thead><tbody id="list-packages"></tbody></table></div>
   </section>
 
+  <!-- GALLERY -->
+  <section class="tab-p" id="tab-gallery">
+    <div class="ph"><div><h1>صور المكان</h1><div class="mut">تظهر للعملاء أعلى صفحة الحجز</div></div>
+      <div class="acts"><button class="btn btn-gold" id="btnAddPhotos">إضافة صور</button><input type="file" id="galFile" accept="image/*" multiple hidden/></div></div>
+    <div class="gal-adm" id="galList"></div>
+  </section>
+
   <!-- SETTINGS -->
   <section class="tab-p" id="tab-settings">
     <div class="ph"><div><h1>الإعدادات</h1></div></div>
     <div class="form" style="max-width:560px">
       <div class="fg full"><label>اسم المحل</label><input id="setName"/></div>
       <div class="fg full"><label>رقم واتساب (بصيغة دولية 20...)</label><input id="setWa" style="direction:ltr;text-align:right"/></div>
+      <div class="fg full"><label>أقصى عدد أشخاص في الحجز الواحد</label><input id="setMax" type="number" min="1" max="10"/></div>
       <div class="fg full" style="flex-direction:row;align-items:center;gap:10px">
         <input type="checkbox" class="tog" id="setAcc"/><label for="setAcc">استقبال الحجز عبر الموقع</label></div>
       <div class="fg full"><button class="btn btn-gold" id="btnSaveSet">حفظ</button></div>
@@ -330,6 +351,7 @@ input[type=date].btn{color-scheme:dark}
   <div class="form" style="grid-template-columns:1fr;box-shadow:none;border:none;padding:0">
     <div class="fg"><label>الاسم</label><input id="wName" placeholder="عميل بالمحل"/></div>
     <div class="fg"><label>الهاتف (اختياري)</label><input id="wPhone" type="tel"/></div>
+    <div class="fg"><label>عدد الأشخاص</label><input id="wPeople" type="number" min="1" value="1"/></div>
     <div class="fg"><label>الحلاق</label><select id="wBarber"></select></div>
     <div class="fg"><label>الباكدج (اختياري)</label><select id="wPack"></select></div>
     <div class="fg"><label>أو الخدمات</label><div class="chk-list" id="wServices"></div></div>
