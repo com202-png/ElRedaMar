@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   BARBER BOOKING — admin.js
+   ONLINE MARKET — admin.js
    تسجيل الدخول عن طريق Supabase Auth (مفيش باسورد مكتوب في الكود)
 ═══════════════════════════════════════ */
 const SB_URL = 'https://aweuqtiqfxjoflvvturi.supabase.co';
@@ -7,11 +7,13 @@ const SB_KEY = 'sb_publishable_DIHyv13-yCxgBKIC8PYCvQ_394bcWSE';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
 const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const EGP = v => `${Number(v || 0).toLocaleString('ar-EG')} ج`;
 const tm = s => new Date(s).toLocaleTimeString('ar-EG', { hour: 'numeric', minute: '2-digit' });
 const todayStr = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' });
-const STATUS = { waiting: 'انتظار', in_service: 'شغّال', done: 'مكتمل', cancelled: 'ملغي', no_show: 'ما جاش' };
+const STATUS = { new: 'جديد', preparing: 'قيد التحضير', delivering: 'في الطريق', delivered: 'تم التسليم', cancelled: 'ملغي' };
+const NEXT = { new: ['preparing', 'بدء التحضير'], preparing: ['delivering', 'خرج للتوصيل'], delivering: ['delivered', 'تم التسليم'] };
+const waNum = p => { const d = String(p || '').replace(/\D/g, ''); return d.startsWith('0') ? '20' + d.slice(1) : d; };
 
 function toast(msg, type = '', ms = 3000) {
   const t = document.createElement('div');
@@ -23,9 +25,18 @@ window.closeMo = id => $(id).classList.remove('open');
 const openMo = id => $(id).classList.add('open');
 document.addEventListener('click', e => { if (e.target.classList.contains('mo')) e.target.classList.remove('open'); });
 
+function beep() {
+  try {
+    const a = new (window.AudioContext || window.webkitAudioContext)();
+    const o = a.createOscillator(), g = a.createGain();
+    o.connect(g); g.connect(a.destination); o.frequency.value = 880; g.gain.value = 0.15;
+    o.start(); setTimeout(() => { o.stop(); a.close(); }, 400);
+  } catch (e) {}
+}
+
 /* ── State ── */
-let barbers = [], services = [], packages = [], todayBk = [], settings = {};
-let started = false, timer = null;
+let cats = [], prods = [], offs = [], orders = [], settings = {};
+let ordFilter = 'active', knownMax = null, started = false, timer = null;
 
 /* ══ AUTH ══ */
 async function tryLogin() {
@@ -47,7 +58,6 @@ document.querySelectorAll('.nav[data-tab]').forEach(btn => btn.addEventListener(
   document.querySelectorAll('.nav[data-tab]').forEach(b => b.classList.toggle('on', b === btn));
   document.querySelectorAll('.tab-p').forEach(p => p.classList.remove('on'));
   $('tab-' + btn.dataset.tab).classList.add('on');
-  if (btn.dataset.tab === 'history') loadHistory();
   closeSB();
 }));
 function closeSB() { $('sidebar').classList.remove('open'); $('sbOv').style.display = 'none'; }
@@ -56,176 +66,168 @@ $('sbOv').addEventListener('click', closeSB);
 
 /* ══ LOAD ══ */
 async function loadAll() {
-  const [b, s, p, bk, st] = await Promise.all([
-    sb.from('barbers').select('*').order('sort').order('id'),
-    sb.from('services').select('*').order('sort').order('id'),
-    sb.from('packages').select('*').order('id'),
-    sb.from('bookings').select('*').eq('booking_date', todayStr()).order('id'),
-    sb.from('settings').select('*'),
+  const [c, p, o, s] = await Promise.all([
+    sb.from('mk_categories').select('*').order('sort').order('id'),
+    sb.from('mk_products').select('*').order('sort').order('id'),
+    sb.from('mk_offers').select('*').order('sort').order('id'),
+    sb.from('mk_settings').select('*'),
   ]);
-  if (b.error) { console.error('load error', b.error); toast('تعذر تحميل البيانات، يرجى إعادة المحاولة', 'err', 5000); return; }
-  barbers = b.data || []; services = s.data || []; packages = p.data || []; todayBk = bk.data || [];
-  settings = Object.fromEntries((st.data || []).map(r => [r.key, r.value]));
-  $('admName').textContent = settings.shop_name || 'Barber Shop';
-  renderQueue(); renderLists(); renderSettings(); loadGallery();
-}
-async function loadToday() {
-  const { data } = await sb.from('bookings').select('*').eq('booking_date', todayStr()).order('id');
-  todayBk = data || []; renderQueue();
+  if (c.error || p.error) { console.error('load error', c.error || p.error); toast('تعذر تحميل البيانات، يرجى إعادة المحاولة', 'err', 5000); return; }
+  cats = c.data || []; prods = p.data || []; offs = o.data || [];
+  settings = Object.fromEntries((s.data || []).map(r => [r.key, r.value]));
+  $('admName').textContent = settings.shop_name || 'المتجر';
+  renderLists(); renderSettings();
+  await loadOrders(true);
 }
 async function start() {
   if (started) return; started = true;
   await loadAll();
-  timer = setInterval(loadToday, 10000);
+  timer = setInterval(() => loadOrders(false), 10000);
 }
 
-/* ══ QUEUE ══ */
-function remaining(b) {
-  if (b.status === 'in_service' && b.started_at) return Math.max(b.duration_min - (Date.now() - new Date(b.started_at)) / 60000, 0);
-  return b.duration_min;
+/* ══ ORDERS ══ */
+async function loadOrders(initial) {
+  const { data, error } = await sb.from('mk_orders').select('*').order('id', { ascending: false }).limit(300);
+  if (error) { console.error('orders error', error); if (initial) toast('تعذر تحميل الطلبات', 'err'); return; }
+  orders = data || [];
+  const max = orders.reduce((m, o) => Math.max(m, o.id), 0);
+  if (knownMax !== null && orders.some(o => o.id > knownMax && o.status === 'new')) {
+    beep(); toast('وصل طلب جديد', 'ok', 4000);
+  }
+  knownMax = max;
+  renderOrders();
 }
-const durTxt = m => { m = Math.round(m); return m < 60 ? `${m} د` : `${Math.floor(m / 60)} س${m % 60 ? ' ' + (m % 60) + ' د' : ''}`; };
+$('btnRefresh').addEventListener('click', () => loadOrders(false));
 
-function renderQueue() {
-  const active = todayBk.filter(b => ['waiting', 'in_service'].includes(b.status));
-  const done = todayBk.filter(b => b.status === 'done');
-  $('sWait').textContent = active.length;
-  $('sDone').textContent = done.length;
-  $('sRev').textContent = EGP(done.reduce((s, b) => s + Number(b.price), 0));
-  $('sAvg').textContent = done.length ? durTxt(done.reduce((s, b) => s + b.duration_min, 0) / done.length) : '—';
-  const bd = $('qBadge'); bd.style.display = active.length ? 'inline-block' : 'none'; bd.textContent = active.length;
-
-  const groups = barbers.filter(b => b.active || active.some(x => x.barber_id === b.id));
-  if (active.some(x => !x.barber_id)) groups.push({ id: null, name: 'بدون حلاق' });
-  if (!groups.length) { $('board').innerHTML = '<div class="q-empty">أضف حلاقين من تبويب الحلاقين أولاً</div>'; return; }
-
-  $('board').innerHTML = groups.map(g => {
-    const list = active.filter(x => x.barber_id === g.id);
-    const wait = list.reduce((s, x) => s + remaining(x), 0);
-    return `<div class="col">
-      <div class="col-h"><b>${esc(g.name)}</b><span>${list.length} في الانتظار · ${list.length ? 'يخلص بعد ' + durTxt(wait) : 'متاح'}</span></div>
-      <div class="col-b">${list.length ? list.map(qItem).join('') : '<div class="q-empty">لا يوجد أحد في الانتظار</div>'}</div></div>`;
-  }).join('');
+function matchFilter(o) {
+  if (ordFilter === 'all') return true;
+  if (ordFilter === 'active') return ['new', 'preparing', 'delivering'].includes(o.status);
+  return o.status === ordFilter;
 }
+function renderOrders() {
+  const today = todayStr();
+  const tod = orders.filter(o => o.order_date === today);
+  const newC = orders.filter(o => o.status === 'new').length;
+  $('sNew').textContent = newC;
+  $('sToday').textContent = tod.length;
+  $('sRev').textContent = EGP(tod.filter(o => o.status !== 'cancelled').reduce((s, o) => s + Number(o.total), 0));
+  $('sDone').textContent = tod.filter(o => o.status === 'delivered').length;
+  const bd = $('qBadge'); bd.style.display = newC ? 'inline-block' : 'none'; bd.textContent = newC;
+  document.title = newC ? `(${newC}) لوحة التحكم` : 'لوحة التحكم';
 
-function qItem(b) {
-  const names = (b.items || []).map(i => esc(i.name)).join(' + ');
-  const acts = b.status === 'waiting'
-    ? `<button class="btn btn-green btn-sm" onclick="setStatus(${b.id},'in_service')">▶ ابدأ</button>
-       <button class="btn btn-red btn-sm" onclick="setStatus(${b.id},'cancelled')">✕</button>
-       <button class="btn btn-line btn-sm" onclick="setStatus(${b.id},'no_show')">ما جاش</button>`
-    : `<button class="btn btn-green btn-sm" onclick="setStatus(${b.id},'done')">تم</button>`;
-  return `<div class="q-item ${b.status}">
-    <div class="q-no">#${b.ticket_no}</div>
-    <div class="q-body"><b>${esc(b.customer_name)}</b>${b.customer_phone && b.customer_phone !== '—' ? `<a href="tel:${esc(b.customer_phone)}">${esc(b.customer_phone)}</a>` : ''}
-      <div class="mut">${names}${b.people > 1 ? ` · ${b.people} أشخاص` : ''}</div>
-      <div class="mut">${durTxt(b.duration_min)} · <span class="gold">${EGP(b.price)}</span> · حجز ${tm(b.created_at)}</div>
-      ${b.notes ? `<div class="mut">${esc(b.notes)}</div>` : ''}</div>
-    <div class="q-act">${acts}</div></div>`;
+  const count = f => orders.filter(o => f === 'all' ? true : f === 'active' ? ['new', 'preparing', 'delivering'].includes(o.status) : o.status === f).length;
+  const chips = [['active', 'النشطة'], ['new', 'جديد'], ['preparing', 'قيد التحضير'], ['delivering', 'في الطريق'], ['delivered', 'تم التسليم'], ['cancelled', 'ملغي'], ['all', 'الكل']];
+  $('ordChips').innerHTML = chips.map(([k, l]) => `<button class="chip ${ordFilter === k ? 'on' : ''}" data-f="${k}">${l} (${count(k)})</button>`).join('');
+
+  const q = $('ordSearch').value.trim().toLowerCase();
+  let list = orders.filter(matchFilter).filter(o => !q || o.customer_name.toLowerCase().includes(q) || o.customer_phone.includes(q) || String(o.order_no) === q.replace('#', ''));
+  const asc = ['active', 'new', 'preparing', 'delivering'].includes(ordFilter);
+  list = list.slice().sort((a, b) => asc ? a.id - b.id : b.id - a.id);
+  $('ordList').innerHTML = list.length ? list.map(orderCard).join('') : '<div class="q-empty mut" style="grid-column:1/-1;padding:30px;text-align:center">لا توجد طلبات</div>';
 }
+$('ordChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { ordFilter = b.dataset.f; renderOrders(); } });
+$('ordSearch').addEventListener('input', renderOrders);
 
-window.setStatus = async (id, status) => {
+function orderCard(o) {
+  const nx = NEXT[o.status];
+  const pay = o.payment_method === 'wallet'
+    ? `محفظة${o.wallet_ref ? ` من <span style="direction:ltr;display:inline-block">${esc(o.wallet_ref)}</span>` : ''} · <span class="st ${o.payment_status}">${o.payment_status === 'paid' ? 'تم التأكيد' : 'لم يؤكد الدفع'}</span>`
+    : `نقداً عند الاستلام${o.payment_status === 'paid' ? ' · <span class="st paid">تم التحصيل</span>' : ''}`;
+  const date = o.order_date !== todayStr() ? ` · ${o.order_date}` : '';
+  const final = o.status === 'delivered' || o.status === 'cancelled';
+  return `<div class="ord ${o.status === 'new' ? 'is-new' : ''}">
+    <div class="ord-h"><b>طلب #${o.order_no} <span class="mut">${tm(o.created_at)}${date}</span></b><span class="st ${o.status}">${STATUS[o.status]}</span></div>
+    <div class="ord-b">
+      <div><b>${esc(o.customer_name)}</b></div>
+      <div class="ord-links">
+        <a href="tel:${esc(o.customer_phone)}" style="direction:ltr">${esc(o.customer_phone)}</a>
+        <a href="https://wa.me/${waNum(o.customer_phone)}" target="_blank" rel="noopener">واتساب</a>
+        ${o.lat != null && o.lng != null ? `<a href="https://www.google.com/maps?q=${o.lat},${o.lng}" target="_blank" rel="noopener">فتح الموقع على الخريطة</a>` : ''}
+      </div>
+      <div class="mut">${esc(o.address)}</div>
+      <ul class="ord-items">${(o.items || []).map(i => `<li><span>${i.qty} × ${esc(i.name)}</span><span>${EGP(i.price * i.qty)}</span></li>`).join('')}</ul>
+      ${o.notes ? `<div class="ord-note">ملاحظات: ${esc(o.notes)}</div>` : ''}
+      <div class="mut">المنتجات ${EGP(o.subtotal)} · التوصيل ${o.delivery_fee > 0 ? EGP(o.delivery_fee) : 'مجاني'}</div>
+      <div class="ord-tot"><span>الإجمالي</span><span class="gold">${EGP(o.total)}</span></div>
+      <div class="mut">الدفع: ${pay}</div>
+    </div>
+    ${final && !(o.payment_method === 'wallet' && o.payment_status === 'unpaid' && o.status !== 'cancelled') ? '' : `<div class="ord-f">
+      ${nx ? `<button class="btn btn-gold btn-sm" onclick="setStatus(${o.id},'${nx[0]}')">${nx[1]}</button>` : ''}
+      ${o.payment_method === 'wallet' && o.payment_status === 'unpaid' && o.status !== 'cancelled' ? `<button class="btn btn-green btn-sm" onclick="markPaid(${o.id})">تأكيد استلام الدفع</button>` : ''}
+      ${!final ? `<button class="btn btn-red btn-sm" onclick="cancelOrder(${o.id})">إلغاء الطلب</button>` : ''}
+    </div>`}
+  </div>`;
+}
+async function patchOrder(id, patch) {
+  const { error } = await sb.from('mk_orders').update(patch).eq('id', id);
+  if (error) { console.error(error); toast('تعذر تحديث الطلب', 'err'); return false; }
+  await loadOrders(false); return true;
+}
+window.setStatus = (id, status) => {
+  const o = orders.find(x => x.id === id);
   const patch = { status };
-  if (status === 'in_service') patch.started_at = new Date().toISOString();
-  const { error } = await sb.from('bookings').update(patch).eq('id', id);
-  if (error) { toast('تعذر التحديث', 'err'); return; }
-  toast(status === 'done' ? 'تم ' : status === 'in_service' ? 'بدأت الخدمة' : 'تم التحديث', 'ok');
-  loadToday();
+  if (status === 'delivered' && o && o.payment_method === 'cash') patch.payment_status = 'paid';
+  patchOrder(id, patch);
 };
-$('btnRefresh').addEventListener('click', loadAll);
+window.markPaid = id => patchOrder(id, { payment_status: 'paid' }).then(ok => ok && toast('تم تأكيد الدفع', 'ok'));
+window.cancelOrder = id => { if (confirm('هل تريد إلغاء الطلب؟')) patchOrder(id, { status: 'cancelled' }); };
 
-/* ══ WALK-IN ══ */
-$('btnWalk').addEventListener('click', () => {
-  $('wName').value = ''; $('wPhone').value = ''; $('wPeople').value = 1;
-  $('wBarber').innerHTML = '<option value="">الأسرع (تلقائي)</option>' + barbers.filter(b => b.active).map(b => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
-  $('wPack').innerHTML = '<option value="">— بدون —</option>' + packages.filter(p => p.active).map(p => `<option value="${p.id}">${esc(p.name)} (${EGP(p.price)})</option>`).join('');
-  $('wServices').innerHTML = services.filter(s => s.active).map(s => `<label><input type="checkbox" value="${s.id}"/> ${esc(s.name)} — ${EGP(s.price)} · ${durTxt(s.duration_min)}</label>`).join('');
-  openMo('moWalk');
-});
-$('btnSaveWalk').addEventListener('click', async () => {
-  const ids = [...document.querySelectorAll('#wServices input:checked')].map(i => Number(i.value));
-  const pack = $('wPack').value ? Number($('wPack').value) : null;
-  if (!pack && !ids.length) { toast('اختر خدمة أو باكدج', 'err'); return; }
-  const { error } = await sb.rpc('create_booking', {
-    p_name: $('wName').value.trim() || 'عميل بالمحل', p_phone: $('wPhone').value.trim() || '—',
-    p_barber: $('wBarber').value ? Number($('wBarber').value) : null,
-    p_service_ids: pack ? [] : ids, p_package_id: pack, p_notes: null,
-    p_people: Math.max(1, Number($('wPeople').value) || 1),
-  });
-  if (error) { toast(error.message, 'err', 4500); return; }
-  closeMo('moWalk'); toast('تمت الإضافة للطابور ', 'ok'); loadToday();
-});
+/* ══ CRUD ══ */
+const T = { products: 'mk_products', categories: 'mk_categories', offers: 'mk_offers' };
+const DATA = () => ({ products: prods, categories: cats, offers: offs });
+const catName = id => (cats.find(c => c.id === id) || {}).name || '—';
+const thumb = u => u ? `<img class="thumb" src="${esc(u)}" alt="" loading="lazy"/>` : '<div class="thumb"></div>';
+const tog = (key, id, field, v) => `<input type="checkbox" class="tog" ${v ? 'checked' : ''} onchange="toggleField('${key}',${id},'${field}',this.checked)"/>`;
+const actions = (key, id) => `<td class="r"><button class="btn btn-line btn-sm" onclick="editItem('${key}',${id})">تعديل</button> <button class="btn btn-red btn-sm" onclick="delItem('${key}',${id})">حذف</button></td>`;
 
-/* ══ HISTORY ══ */
-async function loadHistory() {
-  if (!$('histDate').value) $('histDate').value = todayStr();
-  const { data } = await sb.from('bookings').select('*').eq('booking_date', $('histDate').value).order('id');
-  const list = data || [];
-  histRows = list;
-  const done = list.filter(b => b.status === 'done');
-  $('hTot').textContent = list.length; $('hDone').textContent = done.length;
-  $('hCan').textContent = list.filter(b => ['cancelled', 'no_show'].includes(b.status)).length;
-  $('hRev').textContent = EGP(done.reduce((s, b) => s + Number(b.price), 0));
-  $('histBody').innerHTML = list.length ? list.map(b => `<tr>
-    <td>#${b.ticket_no}</td>
-    <td><b>${esc(b.customer_name)}</b><div class="mut" style="direction:ltr;text-align:right">${esc(b.customer_phone)}</div></td>
-    <td>${esc(b.barber_name || '—')}</td>
-    <td>${(b.items || []).map(i => esc(i.name)).join(' + ')}${b.people > 1 ? ` <span class="mut">× ${b.people} أشخاص</span>` : ''}</td>
-    <td>${durTxt(b.duration_min)}</td><td class="gold">${EGP(b.price)}</td>
-    <td><span class="st ${b.status}">${STATUS[b.status]}</span></td></tr>`).join('')
-    : '<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--ink3)">لا توجد حجوزات في اليوم ده</td></tr>';
-}
-let histRows = [];
-$('histDate').addEventListener('change', loadHistory);
-$('btnCsv').addEventListener('click', () => {
-  if (!histRows.length) { toast('لا توجد بيانات', 'err'); return; }
-  const rows = histRows.map(b => [b.ticket_no, b.customer_name, b.customer_phone, b.barber_name || '', (b.items || []).map(i => i.name).join(' + '), b.duration_min, b.price, STATUS[b.status]]
-    .map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
-  const csv = '\uFEFF' + ['#,العميل,الهاتف,الحلاق,الخدمة,المدة,السعر,الحالة', ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-  a.download = `bookings-${$('histDate').value}.csv`; a.click();
-});
-
-/* ══ CRUD: barbers / services / packages ══ */
 const CFG = {
-  barbers: { label: 'حلاق', fields: [['name', 'الاسم', 'text', 1], ['specialty', 'التخصص (اختياري)', 'text'], ['photo_url', 'رابط الصورة (اختياري)', 'text'], ['sort', 'الترتيب', 'number']],
-    row: r => `<td><b>${esc(r.name)}</b><div class="mut">${esc(r.specialty || '')}</div></td>` },
-  services: { label: 'خدمة', fields: [['name', 'اسم الخدمة', 'text', 1], ['price', 'السعر (جنيه)', 'number', 1], ['duration_min', 'الوقت التقديري (دقيقة)', 'number', 1], ['sort', 'الترتيب', 'number']],
-    row: r => `<td><b>${esc(r.name)}</b></td><td class="gold">${EGP(r.price)}</td><td>${durTxt(r.duration_min)}</td>` },
-  packages: { label: 'باكدج', fields: [['name', 'اسم الباكدج', 'text', 1], ['description', 'الوصف (إيه اللي فيه)', 'text'], ['price', 'السعر (جنيه)', 'number', 1], ['old_price', 'السعر قبل الخصم (اختياري)', 'number'], ['duration_min', 'الوقت التقديري (دقيقة)', 'number', 1]],
-    row: r => `<td><b>${esc(r.name)}</b><div class="mut">${esc(r.description || '')}</div></td><td class="gold">${EGP(r.price)}${r.old_price ? ` <s class="mut">${EGP(r.old_price)}</s>` : ''}</td><td>${durTxt(r.duration_min)}</td>` },
+  products: {
+    label: 'منتج',
+    fields: [['name', 'اسم المنتج', 'text', 1], ['category_id', 'القسم', 'cat'], ['description', 'الوصف', 'text'], ['price', 'السعر (جنيه)', 'number', 1], ['old_price', 'السعر قبل الخصم (اختياري)', 'number'], ['image_url', 'صورة المنتج', 'image'], ['sort', 'الترتيب', 'number']],
+    head: ['', 'المنتج', 'السعر', 'متاح', 'ظاهر', ''],
+    row: r => `<td>${thumb(r.image_url)}</td><td><b>${esc(r.name)}</b><div class="mut">${esc(catName(r.category_id))}</div></td><td class="gold">${EGP(r.price)}${r.old_price ? ` <s class="mut">${EGP(r.old_price)}</s>` : ''}</td><td>${tog('products', r.id, 'available', r.available)}</td><td>${tog('products', r.id, 'active', r.active)}</td>${actions('products', r.id)}`,
+  },
+  categories: {
+    label: 'قسم',
+    fields: [['name', 'اسم القسم', 'text', 1], ['sort', 'الترتيب', 'number']],
+    head: ['القسم', 'عدد المنتجات', 'ظاهر', ''],
+    row: r => `<td><b>${esc(r.name)}</b></td><td>${prods.filter(p => p.category_id === r.id).length}</td><td>${tog('categories', r.id, 'active', r.active)}</td>${actions('categories', r.id)}`,
+  },
+  offers: {
+    label: 'عرض',
+    fields: [['title', 'عنوان العرض', 'text', 1], ['description', 'الوصف (إيه اللي في العرض)', 'text'], ['price', 'سعر العرض (جنيه)', 'number', 1], ['old_price', 'السعر قبل الخصم (اختياري)', 'number'], ['image_url', 'صورة العرض', 'image'], ['sort', 'الترتيب', 'number']],
+    head: ['', 'العرض', 'السعر', 'ظاهر', ''],
+    row: r => `<td>${thumb(r.image_url)}</td><td><b>${esc(r.title)}</b><div class="mut">${esc(r.description || '')}</div></td><td class="gold">${EGP(r.price)}${r.old_price ? ` <s class="mut">${EGP(r.old_price)}</s>` : ''}</td><td>${tog('offers', r.id, 'active', r.active)}</td>${actions('offers', r.id)}`,
+  },
 };
-const DATA = () => ({ barbers, services, packages });
 
 function renderLists() {
   for (const key of Object.keys(CFG)) {
-    const list = DATA()[key];
-    $('list-' + key).innerHTML = list.length ? list.map(r => `<tr>${CFG[key].row(r)}
-      <td><input type="checkbox" class="tog" ${r.active ? 'checked' : ''} onchange="toggleActive('${key}',${r.id},this.checked)"/></td>
-      <td class="r"><button class="btn btn-line btn-sm" onclick="editItem('${key}',${r.id})">تعديل</button>
-        <button class="btn btn-red btn-sm" onclick="delItem('${key}',${r.id})">حذف</button></td></tr>`).join('')
-      : `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--ink3)">لا يوجد — أضف أول ${CFG[key].label}</td></tr>`;
+    const list = DATA()[key], cfg = CFG[key];
+    $('list-' + key).innerHTML = `<table class="tbl"><thead><tr>${cfg.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${
+      list.length ? list.map(r => `<tr>${cfg.row(r)}</tr>`).join('')
+        : `<tr><td colspan="${cfg.head.length}" style="text-align:center;padding:30px;color:var(--ink3)">لا يوجد، أضف أول ${cfg.label}</td></tr>`}</tbody></table>`;
   }
 }
-window.toggleActive = async (key, id, v) => {
-  const { error } = await sb.from(key).update({ active: v }).eq('id', id);
-  if (error) { toast('تعذر التحديث', 'err'); return; }
-  DATA()[key].find(r => r.id === id).active = v; toast(v ? 'تم الإظهار' : 'تم الإخفاء');
+window.toggleField = async (key, id, field, v) => {
+  const { error } = await sb.from(T[key]).update({ [field]: v }).eq('id', id);
+  if (error) { toast('تعذر التحديث', 'err'); loadAll(); return; }
+  DATA()[key].find(r => r.id === id)[field] = v;
+  toast('تم التحديث');
 };
 window.delItem = async (key, id) => {
   if (!confirm('هل تريد الحذف؟ يفضل الإخفاء بدلاً من الحذف.')) return;
-  const { error } = await sb.from(key).delete().eq('id', id);
+  const { error } = await sb.from(T[key]).delete().eq('id', id);
   if (error) { toast('تعذر الحذف', 'err'); return; }
   toast('تم الحذف'); loadAll();
 };
 
-/* ── صورة الحلاق: اختيار من الجهاز، قص مربع، تصغير، رفع ── */
+/* ── صورة: اختيار من الجهاز، تصغير، رفع ── */
 let uploading = false;
-function photoField(url) {
-  return `<div class="fg"><label>الصورة</label>
+function imageField(label, url) {
+  return `<div class="fg"><label>${label}</label>
     <div style="display:flex;align-items:center;gap:12px">
-      <div class="avatar" id="phPrev" style="margin:0;width:64px;height:64px">${url ? `<img src="${esc(url)}" alt=""/>` : '—'}</div>
+      <div class="avatar" id="phPrev" style="width:72px;height:72px">${url ? `<img src="${esc(url)}" alt=""/>` : 'بدون صورة'}</div>
       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
         <button type="button" class="btn btn-line btn-sm" id="phPick">اختيار صورة</button>
         <button type="button" class="btn btn-red btn-sm" id="phDel" ${url ? '' : 'style="display:none"'}>إزالة الصورة</button>
@@ -233,24 +235,25 @@ function photoField(url) {
       </div>
       <input type="file" id="phFile" accept="image/*" hidden/>
     </div>
-    <input type="hidden" data-k="photo_url" value="${esc(url || '')}"/></div>`;
+    <input type="hidden" data-k="image_url" value="${esc(url || '')}"/></div>`;
 }
-async function resizeToBlob(file, size = 480) {
+async function resizeMax(file, max = 900) {
   const img = await new Promise((res, rej) => {
     const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file);
   });
-  const c = document.createElement('canvas'); c.width = c.height = size;
-  const m = Math.min(img.width, img.height);
-  c.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, size, size);
+  const r = Math.min(1, max / Math.max(img.width, img.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
   URL.revokeObjectURL(img.src);
-  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.85));
+  return new Promise(res => c.toBlob(res, 'image/jpeg', 0.82));
 }
-function wirePhoto() {
+function wirePhoto(folder) {
   const file = $('phFile'); if (!file) return;
-  const hidden = document.querySelector('#itemFields [data-k="photo_url"]');
+  const hidden = document.querySelector('#itemFields [data-k="image_url"]');
   const setUrl = u => {
     hidden.value = u || '';
-    $('phPrev').innerHTML = u ? `<img src="${esc(u)}" alt=""/>` : '—';
+    $('phPrev').innerHTML = u ? `<img src="${esc(u)}" alt=""/>` : 'بدون صورة';
     $('phDel').style.display = u ? '' : 'none';
   };
   $('phPick').onclick = () => file.click();
@@ -259,11 +262,11 @@ function wirePhoto() {
     const f = file.files[0]; if (!f) return;
     uploading = true; $('phMsg').textContent = 'جاري رفع الصورة...';
     try {
-      const blob = await resizeToBlob(f);
-      const path = `${Date.now()}.jpg`;
-      const { error } = await sb.storage.from('barbers').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+      const blob = await resizeMax(f);
+      const path = `${folder}/${Date.now()}.jpg`;
+      const { error } = await sb.storage.from('market').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
       if (error) throw error;
-      setUrl(sb.storage.from('barbers').getPublicUrl(path).data.publicUrl);
+      setUrl(sb.storage.from('market').getPublicUrl(path).data.publicUrl);
       $('phMsg').textContent = '';
     } catch (e) {
       console.error('upload error', e);
@@ -279,9 +282,12 @@ window.editItem = (key, id) => {
   const cfg = CFG[key], row = id ? DATA()[key].find(r => r.id === id) : null;
   editing = { key, id };
   $('itemTitle').textContent = (row ? 'تعديل ' : 'إضافة ') + cfg.label;
-  $('itemFields').innerHTML = cfg.fields.map(([k, l, t, req]) => k === 'photo_url' ? photoField(row ? row.photo_url : '') :
-    `<div class="fg"><label>${l}${req ? ' *' : ''}</label><input data-k="${k}" type="${t}" ${t === 'number' ? 'min="0" step="any"' : ''} value="${esc(row ? row[k] ?? '' : (k === 'sort' ? 0 : ''))}"/></div>`).join('');
-  wirePhoto();
+  $('itemFields').innerHTML = cfg.fields.map(([k, l, t, req]) => {
+    if (t === 'image') return imageField(l, row ? row[k] : '');
+    if (t === 'cat') return `<div class="fg"><label>${l}</label><select data-k="${k}"><option value="">بدون قسم</option>${cats.map(c => `<option value="${c.id}" ${row && row[k] === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>`;
+    return `<div class="fg"><label>${l}${req ? ' *' : ''}</label><input data-k="${k}" type="${t}" ${t === 'number' ? 'min="0" step="any"' : ''} value="${esc(row ? row[k] ?? '' : (k === 'sort' ? 0 : ''))}"/></div>`;
+  }).join('');
+  wirePhoto(key);
   openMo('moItem');
 };
 $('btnSaveItem').addEventListener('click', async () => {
@@ -290,14 +296,13 @@ $('btnSaveItem').addEventListener('click', async () => {
   for (const [k, l, t, req] of cfg.fields) {
     const raw = document.querySelector(`#itemFields [data-k="${k}"]`).value.trim();
     if (req && !raw) { toast(`${l} مطلوب`, 'err'); return; }
-    payload[k] = t === 'number' ? (raw === '' ? null : Number(raw)) : (raw || null);
+    payload[k] = t === 'number' ? (raw === '' ? null : Number(raw)) : t === 'cat' ? (raw ? Number(raw) : null) : (raw || null);
   }
   if ('sort' in payload && payload.sort === null) payload.sort = 0;
-  if (payload.duration_min !== undefined && payload.duration_min < 1) { toast('الوقت لازم يكون دقيقة على الأقل', 'err'); return; }
-  const q = id ? sb.from(key).update(payload).eq('id', id) : sb.from(key).insert([payload]);
-  const { error } = await q;
-  if (error) { toast('خطأ: ' + error.message, 'err', 4500); return; }
-  closeMo('moItem'); toast('تم الحفظ ', 'ok'); loadAll();
+  if ('price' in payload && payload.price < 0) { toast('السعر غير صحيح', 'err'); return; }
+  const { error } = await (id ? sb.from(T[key]).update(payload).eq('id', id) : sb.from(T[key]).insert([payload]));
+  if (error) { console.error(error); toast('تعذر الحفظ، تأكد من البيانات', 'err', 4500); return; }
+  closeMo('moItem'); toast('تم الحفظ', 'ok'); loadAll();
 });
 
 /* ══ SETTINGS ══ */
@@ -305,71 +310,32 @@ function renderSettings() {
   $('setName').value = settings.shop_name || '';
   $('setWa').value = settings.whatsapp || '';
   $('setAcc').checked = settings.accepting !== 'false';
-  $('setMax').value = settings.max_people || 5;
+  $('setFee').value = settings.delivery_fee ?? 0;
+  $('setMin').value = settings.min_order ?? 0;
+  $('setFree').value = settings.free_over ?? 0;
+  $('setCash').checked = settings.cash_enabled !== 'false';
+  $('setWallet').checked = settings.wallet_enabled !== 'false';
+  $('setWName').value = settings.wallet_name || '';
+  $('setWNum').value = settings.wallet_number || '';
 }
+const num = id => String(Math.max(0, Number($(id).value) || 0));
 $('btnSaveSet').addEventListener('click', async () => {
   const rows = [
-    { key: 'shop_name', value: $('setName').value.trim() || 'Barber Shop' },
+    { key: 'shop_name', value: $('setName').value.trim() || 'المتجر' },
     { key: 'whatsapp', value: $('setWa').value.trim() },
     { key: 'accepting', value: $('setAcc').checked ? 'true' : 'false' },
-    { key: 'max_people', value: String(Math.min(10, Math.max(1, Number($('setMax').value) || 5))) },
+    { key: 'delivery_fee', value: num('setFee') },
+    { key: 'min_order', value: num('setMin') },
+    { key: 'free_over', value: num('setFree') },
+    { key: 'cash_enabled', value: $('setCash').checked ? 'true' : 'false' },
+    { key: 'wallet_enabled', value: $('setWallet').checked ? 'true' : 'false' },
+    { key: 'wallet_name', value: $('setWName').value.trim() },
+    { key: 'wallet_number', value: $('setWNum').value.trim() },
   ];
-  const { error } = await sb.from('settings').upsert(rows);
+  const { error } = await sb.from('mk_settings').upsert(rows);
   if (error) { toast('تعذر الحفظ', 'err'); return; }
-  toast('تم حفظ الإعدادات ', 'ok'); loadAll();
+  toast('تم حفظ الإعدادات', 'ok'); loadAll();
 });
-
-/* ══ GALLERY ══ */
-let gallery = [];
-async function loadGallery() {
-  const { data } = await sb.from('gallery').select('*').order('sort').order('id');
-  gallery = data || []; renderGallery();
-}
-function renderGallery() {
-  $('galList').innerHTML = gallery.length
-    ? gallery.map(g => `<div class="gal-it"><img src="${esc(g.image_url)}" alt="" loading="lazy"/><button class="btn btn-red btn-sm" onclick="delPhoto(${g.id})">حذف</button></div>`).join('')
-    : '<div class="q-empty" style="grid-column:1/-1">لا توجد صور بعد</div>';
-}
-async function resizeMax(file, max = 1280) {
-  const img = await new Promise((res, rej) => {
-    const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file);
-  });
-  const r = Math.min(1, max / Math.max(img.width, img.height));
-  const c = document.createElement('canvas');
-  c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
-  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-  URL.revokeObjectURL(img.src);
-  return new Promise(res => c.toBlob(res, 'image/jpeg', 0.82));
-}
-$('btnAddPhotos').addEventListener('click', () => $('galFile').click());
-$('galFile').addEventListener('change', async () => {
-  const files = [...$('galFile').files]; if (!files.length) return;
-  const btn = $('btnAddPhotos'); btn.disabled = true; let ok = 0;
-  for (let i = 0; i < files.length; i++) {
-    btn.textContent = `جاري الرفع ${i + 1}/${files.length}`;
-    try {
-      const blob = await resizeMax(files[i]);
-      const path = `${Date.now()}-${i}.jpg`;
-      const up = await sb.storage.from('gallery').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
-      if (up.error) throw up.error;
-      const url = sb.storage.from('gallery').getPublicUrl(path).data.publicUrl;
-      const ins = await sb.from('gallery').insert([{ image_url: url }]);
-      if (ins.error) throw ins.error;
-      ok++;
-    } catch (e) { console.error('gallery upload', e); }
-  }
-  btn.disabled = false; btn.textContent = 'إضافة صور'; $('galFile').value = '';
-  toast(ok === files.length ? 'تم رفع الصور' : `تم رفع ${ok} من ${files.length}`, ok === files.length ? 'ok' : 'err', 4000);
-  loadGallery();
-});
-window.delPhoto = async id => {
-  if (!confirm('هل تريد حذف الصورة؟')) return;
-  const g = gallery.find(x => x.id === id);
-  const { error } = await sb.from('gallery').delete().eq('id', id);
-  if (error) { toast('تعذر الحذف', 'err'); return; }
-  if (g) sb.storage.from('gallery').remove([g.image_url.split('/gallery/').pop()]);
-  toast('تم الحذف'); loadGallery();
-};
 
 /* ══ INIT ══ */
 (async () => {
