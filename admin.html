@@ -3,32 +3,33 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>لوحة التحكم | Barber Shop</title>
+<title>لوحة التحكم</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
   color-scheme:dark;
   --bg:#121212;--bg2:#181818;--card:#1c1c1c;--card2:#222;
   --ink:#ececec;--ink2:#bdbdbd;--ink3:#8c8c8c;
   --paper:#f2f2f2;--paper-ink:#151515;
-  --gold:#d4a53a;--gold-l:#d4a53a;--gold-d:#b98a22;
+  --acc:#ff8a1f;--acc-d:#e57610;
   --line:#2c2c2c;--line-g:#4a4a4a;
-  --green:#4caf7d;--red:#e5604f;--blue:#6ea8fe;
-  --r:8px;--r-lg:8px;--pill:6px;
+  --green:#4caf7d;--red:#e5604f;--blue:#6ea8fe;--yellow:#e0b030;
   font-family:'Tajawal',system-ui,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;font-size:15px}
 button,input,select,textarea{font-family:inherit;font-size:inherit}
 input::placeholder,textarea::placeholder{color:var(--ink3)}
+a{color:var(--blue)}
 .mut{font-size:.8rem;color:var(--ink3)}
+.hide{display:none!important}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:6px;border:1px solid transparent;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
-.btn-gold{background:var(--gold);color:#1a1405}
-.btn-gold:hover{background:#e0b24a}
+.btn-gold{background:var(--acc);color:#1a1005}
+.btn-gold:hover{background:#ff9d40}
 .btn-dark{background:var(--paper);color:var(--paper-ink)}
 .btn-dark:hover{background:#fff}
 .btn-line{background:transparent;border-color:var(--line-g);color:var(--ink)}
@@ -37,113 +38,49 @@ input::placeholder,textarea::placeholder{color:var(--ink3)}
 .btn-red:hover{background:#2a1815}
 .btn-green{background:transparent;border-color:#285a41;color:var(--green)}
 .btn-green:hover{background:#15271e}
-.btn-sm{padding:5px 11px;font-size:.8rem}
+.btn-sm{padding:5px 12px;font-size:.82rem}
+.btn-block{width:100%;padding:12px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
-/* header */
-.top{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--line)}
-.top-in{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{font-weight:700;font-size:1.05rem}
-.logo-mark{display:none}
-
-/* hero */
-.hero{background:var(--bg2);border-bottom:1px solid var(--line);padding:32px max(20px,calc((100% - 1100px)/2)) 30px;text-align:start}
-.hero h1{font-size:1.7rem;font-weight:700;margin-bottom:6px}
-.hero p{color:var(--ink2);max-width:560px}
-.closed-banner{display:none;background:#8f2f24;color:#fff;text-align:center;padding:9px;font-size:.9rem}
-
-/* steps */
-.wrap{max-width:1100px;margin:0 auto;padding:4px 20px 130px}
-.step{margin-top:30px}
-.step h2{font-size:1.1rem;font-weight:700;margin-bottom:12px}
-.num{color:var(--ink3);margin-inline-end:4px}
-.num::after{content:'.'}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;cursor:pointer;text-align:right}
-.card:hover{border-color:#555}
-.card.sel{border-color:var(--gold);background:var(--card2);outline:1px solid var(--gold)}
-.avatar{width:48px;height:48px;border-radius:50%;background:#2a2a2a;display:grid;place-items:center;font-size:1.1rem;font-weight:700;color:var(--ink2);overflow:hidden;margin-bottom:8px}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.c-name{font-weight:700;font-size:.98rem}
-.c-sub{font-size:.8rem;color:var(--ink3);margin-top:2px;min-height:1.1em}
-.q-pill{display:inline-block;margin-top:8px;padding:2px 9px;border-radius:4px;font-size:.76rem;font-weight:600;background:#15271e;color:var(--green)}
-.q-pill.busy{background:#2b2412;color:var(--gold)}
-
-.tabs{display:flex;gap:6px;margin-bottom:12px}
-.tab{padding:7px 18px;border-radius:6px;border:1px solid var(--line-g);background:transparent;font-weight:600;font-size:.88rem;cursor:pointer;color:var(--ink2)}
-.tab.on{background:var(--paper);border-color:var(--paper);color:var(--paper-ink)}
-.svc{display:flex;flex-direction:column;gap:6px}
-.svc .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.svc .p{font-weight:700;color:var(--gold);white-space:nowrap}
-.svc .d{font-size:.8rem;color:var(--ink3)}
-.old{text-decoration:line-through;color:var(--ink3);font-weight:400;font-size:.8rem;margin-inline-start:6px}
-.badge-pk{display:inline-block;background:#2a2a2a;color:var(--ink2);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:4px;width:max-content}
-
 /* forms */
-.form{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fg{display:flex;flex-direction:column;gap:5px}
 .fg.full{grid-column:1/-1}
 .fg label{font-size:.82rem;font-weight:600;color:var(--ink2)}
-.fg input,.fg select,.fg textarea{padding:9px 12px;border-radius:6px;border:1px solid var(--line-g);background:var(--bg);color:var(--ink);outline:none}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
-
-/* bottom bar */
-.bar{position:fixed;bottom:0;inset-inline:0;z-index:150;background:var(--paper);color:var(--paper-ink);border-top:1px solid #cfcfcf}
-.bar-in{max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-.bar-sum{display:flex;gap:24px;flex-wrap:wrap}
-.bar-sum .k{font-size:.72rem;color:#666}
-.bar-sum .v{font-weight:700;font-size:.98rem;color:var(--paper-ink)}
+.fg input,.fg select,.fg textarea{padding:10px 12px;border-radius:6px;border:1px solid var(--line-g);background:var(--bg);color:var(--ink);outline:none;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--acc)}
 
 /* modal */
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none}
 .mo.open{opacity:1;pointer-events:auto}
-.mo-box{background:var(--card2);border:1px solid var(--line-g);border-radius:8px;padding:22px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto}
+.mo-box{background:var(--card2);border:1px solid var(--line-g);border-radius:8px;padding:20px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto}
 .mo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .mo-head h2{font-size:1.1rem;font-weight:700}
 .mo-x{width:30px;height:30px;border:1px solid var(--line-g);border-radius:6px;background:transparent;color:var(--ink);cursor:pointer}
 .mo-x:hover{background:#2c2c2c}
 .mo-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
 
-.ticket{text-align:center}
-.ticket h3{font-size:1.15rem;font-weight:700;margin:2px 0}
-.t-no{display:inline-block;margin:10px 0;padding:6px 24px;border-radius:6px;background:var(--paper);color:var(--paper-ink);font-size:1.5rem;font-weight:700}
-.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;text-align:right}
-.t-cell{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px}
-.t-cell .k{font-size:.74rem;color:var(--ink3)}
-.t-cell .v{font-weight:700;font-size:.98rem;margin-top:2px}
-.t-cell.hl{border-color:var(--gold)}
-.note{font-size:.78rem;color:var(--ink3);line-height:1.7}
-
-.trk{border:1px solid var(--line);border-radius:6px;padding:12px;margin-top:10px;background:var(--bg)}
-.trk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-.trk-no{font-weight:700}
-.st{padding:2px 9px;border-radius:4px;font-size:.74rem;font-weight:600}
-.st.waiting{background:#2b2412;color:var(--gold)}
-.st.in_service,.st.done{background:#15271e;color:var(--green)}
-.st.cancelled,.st.no_show{background:#2a1815;color:var(--red)}
-
 /* toast */
-#tc{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none;align-items:center}
+#tc{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none;align-items:center;width:max-content;max-width:92vw}
 .tst{padding:9px 16px;border-radius:6px;background:#2e2e2e;color:var(--ink);border:1px solid var(--line-g);font-size:.88rem}
 .tst.ok{background:#1d6b45;border-color:#1d6b45;color:#fff}
 .tst.err{background:#8f2f24;border-color:#8f2f24;color:#fff}
 .tst.hid{opacity:0;transition:opacity .25s}
 
-footer{background:var(--bg2);border-top:1px solid var(--line);color:var(--ink3);text-align:center;padding:18px;font-size:.8rem}
-footer a{color:var(--ink2);text-decoration:none}
-footer a:hover{text-decoration:underline}
-
 .empty{grid-column:1/-1;text-align:center;padding:30px;color:var(--ink3);line-height:1.8}
+.st{display:inline-block;padding:2px 9px;border-radius:4px;font-size:.76rem;font-weight:600}
+.st.new{background:#2b2412;color:var(--yellow)}
+.st.preparing{background:#14233a;color:var(--blue)}
+.st.delivering{background:#2d1f10;color:var(--acc)}
+.st.delivered,.st.paid{background:#15271e;color:var(--green)}
+.st.cancelled{background:#2a1815;color:var(--red)}
+.st.unpaid{background:#2b2412;color:var(--yellow)}
+.thumb{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#2a2a2a;display:block}
+.avatar{width:56px;height:56px;border-radius:6px;background:#2a2a2a;display:grid;place-items:center;color:var(--ink3);font-size:.7rem;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+@media(max-width:640px){.form{grid-template-columns:1fr}}
 
-@media(max-width:640px){
-  .form{grid-template-columns:1fr}
-  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
-  .bar-sum{gap:14px}
-  .bar-in{padding:8px 14px}
-  .hero h1{font-size:1.4rem}
-}
-
+/* ── admin ── */
 body{display:flex}
 .sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--line);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto}
 .sb-brand{padding:16px;border-bottom:1px solid var(--line);font-weight:700}
@@ -159,41 +96,47 @@ body{display:flex}
 .tab-p{display:none}.tab-p.on{display:block}
 .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .ph h1{font-size:1.4rem;font-weight:700}
-.acts{display:flex;gap:8px;flex-wrap:wrap}
-input[type=date].btn{color-scheme:dark}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
 .stat .k{font-size:.76rem;color:var(--ink3)}
 .stat .v{font-size:1.3rem;font-weight:700;margin-top:2px}
 
-.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;align-items:start}
-.col{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.col-h{padding:11px 14px;background:var(--paper);color:var(--paper-ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
-.col-h b{font-size:.98rem}
-.col-h span{font-size:.76rem;color:#555}
-.col-b{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:64px}
-.q-item{display:flex;gap:10px;padding:9px;border-radius:6px;background:var(--bg);border:1px solid var(--line)}
-.q-item.in_service{border-color:#285a41;background:#111c16}
-.q-no{min-width:36px;height:36px;border-radius:6px;background:#2a2a2a;color:var(--ink);font-weight:700;font-size:.84rem;display:grid;place-items:center;flex-shrink:0}
-.q-body{flex:1;min-width:0;font-size:.86rem}
-.q-body a{color:var(--blue);text-decoration:none;direction:ltr;display:inline-block;font-size:.78rem;margin-inline-start:6px}
-.q-act{display:flex;flex-direction:column;gap:4px}
-.q-empty{text-align:center;color:var(--ink3);font-size:.85rem;padding:16px 0}
+.fbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.fbar input{padding:8px 12px;border-radius:6px;border:1px solid var(--line-g);background:var(--bg);color:var(--ink);outline:none;min-width:200px}
+.chip{padding:5px 14px;border-radius:6px;border:1px solid var(--line-g);background:transparent;color:var(--ink2);font-size:.86rem;font-weight:600;cursor:pointer}
+.chip.on{background:var(--paper);border-color:var(--paper);color:var(--paper-ink)}
 
+/* orders */
+.olist{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;align-items:start}
+.ord{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ord.is-new{border-color:var(--acc)}
+.ord-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--line)}
+.ord-b{padding:12px 14px;font-size:.88rem;display:flex;flex-direction:column;gap:6px}
+.ord-b a{text-decoration:none}
+.ord-links{display:flex;gap:12px;flex-wrap:wrap;font-size:.84rem}
+.ord-items{list-style:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0;margin:2px 0}
+.ord-items li{display:flex;justify-content:space-between;padding:2px 0}
+.ord-note{background:#2b2412;color:var(--yellow);border-radius:6px;padding:6px 10px;font-size:.84rem}
+.ord-tot{display:flex;justify-content:space-between;font-weight:700}
+.ord-f{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--line)}
+
+/* tables */
 .tbl-w{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:auto}
 .tbl{width:100%;border-collapse:collapse;min-width:520px}
 .tbl th{background:var(--bg2);color:var(--ink3);font-size:.76rem;font-weight:600;padding:10px 12px;text-align:right;white-space:nowrap}
 .tbl td{padding:10px 12px;border-top:1px solid var(--line);font-size:.87rem;vertical-align:middle}
 .tbl .r{text-align:left;white-space:nowrap}
-.gold{color:var(--gold);font-weight:700}
-.tog{width:36px;height:20px;appearance:none;-webkit-appearance:none;background:#444;border-radius:999px;cursor:pointer;position:relative;border:none}
+.gold{color:var(--acc);font-weight:700}
+.tog{width:36px;height:20px;appearance:none;-webkit-appearance:none;background:#444;border-radius:999px;cursor:pointer;position:relative;border:none;flex:none}
 .tog:checked{background:var(--green)}
 .tog::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .15s}
 .tog:checked::after{transform:translateX(-16px)}
-
-.chk-list{display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;border:1px solid var(--line-g);border-radius:6px;padding:8px;background:var(--bg)}
-.chk-list label{display:flex;align-items:center;gap:8px;font-size:.87rem;cursor:pointer}
+.setbox{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;max-width:620px}
+.setbox h3{font-size:.95rem;margin:14px 0 8px;color:var(--ink2)}
+.setbox h3:first-child{margin-top:0}
+.chk{display:flex;align-items:center;gap:10px;font-size:.9rem;padding:4px 0}
 
 .login{position:fixed;inset:0;z-index:900;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
 .login-box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:28px;width:100%;max-width:360px;text-align:center}
@@ -207,20 +150,9 @@ input[type=date].btn{color-scheme:dark}
   .mob button{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--ink)}
   .main{padding:64px 14px 60px}
   .stats{grid-template-columns:repeat(2,1fr)}
+  .olist{grid-template-columns:1fr}
 }
 
-
-.gal{max-width:1100px;margin:24px auto 0;padding:0 20px}
-.gal h2{font-size:1.05rem;font-weight:700;margin-bottom:10px}
-.gal-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
-.gal-row img{height:150px;width:220px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:pointer;flex:none}
-.mo-box.lb{max-width:900px;padding:6px;background:transparent;border:none}
-.lb img{display:block;max-width:100%;max-height:85vh;margin:0 auto;border-radius:6px;cursor:pointer}
-
-.gal-adm{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.gal-it{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
-.gal-it img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
-.gal-it .btn{position:absolute;top:6px;left:6px;background:#1c1c1c}
 </style>
 </head>
 <body>
@@ -229,134 +161,111 @@ input[type=date].btn{color-scheme:dark}
 <!-- LOGIN -->
 <div class="login" id="loginScreen">
   <div class="login-box">
-    
     <h1>لوحة التحكم</h1>
-    <div class="mut" style="margin-bottom:22px">الدخول للمسؤول فقط</div>
-    <div class="fg" style="text-align:right;margin-bottom:12px"><label>البريد الإلكتروني</label><input id="loginUser" type="email" autocomplete="username" placeholder="admin@example.com"/></div>
-    <div class="fg" style="text-align:right;margin-bottom:18px"><label>كلمة المرور</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••"/></div>
-    <button class="btn btn-gold" id="loginBtn" style="width:100%">دخول</button>
-    <div class="login-err" id="loginErr">البريد الإلكتروني أو كلمة المرور غلط</div>
+    <div class="mut" style="margin-bottom:20px">الدخول للمسؤول فقط</div>
+    <div class="fg" style="text-align:right;margin-bottom:12px"><label>البريد الإلكتروني</label><input id="loginUser" type="email" autocomplete="username"/></div>
+    <div class="fg" style="text-align:right;margin-bottom:16px"><label>كلمة المرور</label><input id="loginPass" type="password" autocomplete="current-password"/></div>
+    <button class="btn btn-gold btn-block" id="loginBtn">دخول</button>
+    <div class="login-err" id="loginErr">البريد الإلكتروني أو كلمة المرور غير صحيحة</div>
   </div>
 </div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sb-brand"><span id="admName">Barber Shop</span></div>
+  <div class="sb-brand" id="admName">المتجر</div>
   <nav class="sb-nav">
-    <button class="nav on" data-tab="queue">قائمة الانتظار<span class="badge" id="qBadge" style="display:none">0</span></button>
-    <button class="nav" data-tab="history">سجل الحجوزات</button>
-    <button class="nav" data-tab="barbers">الحلاقين</button>
-    <button class="nav" data-tab="services">الخدمات والأسعار</button>
-    <button class="nav" data-tab="packages">الباكدجات</button>
-    <button class="nav" data-tab="gallery">Joo Barber Shop</button>
+    <button class="nav on" data-tab="orders">الطلبات<span class="badge" id="qBadge" style="display:none">0</span></button>
+    <button class="nav" data-tab="products">المنتجات</button>
+    <button class="nav" data-tab="categories">الأقسام</button>
+    <button class="nav" data-tab="offers">العروض</button>
     <button class="nav" data-tab="settings">الإعدادات</button>
   </nav>
   <div class="sb-foot">
-    <a class="nav" href="index.html">موقع العملاء</a>
+    <a class="nav" href="index.html">صفحة العملاء</a>
     <button class="nav" id="logoutBtn" style="color:var(--red)">تسجيل خروج</button>
   </div>
 </aside>
-<div id="sbOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:250"></div>
-<div class="mob"><button id="mobBtn">☰</button><b>لوحة التحكم</b></div>
+<div id="sbOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250"></div>
+<div class="mob"><button id="mobBtn">☰</button><b>لوحة التحكم</b><span></span></div>
 
 <div class="main">
 
-  <!-- QUEUE -->
-  <section class="tab-p on" id="tab-queue">
+  <!-- ORDERS -->
+  <section class="tab-p on" id="tab-orders">
     <div class="ph">
-      <div><h1>قائمة الانتظار</h1><div class="mut">اليوم · يتم التحديث تلقائياً كل 10 ثوانٍ</div></div>
-      <div class="acts">
-        <button class="btn btn-gold" id="btnWalk">+ إضافة عميل في المحل</button>
-        <button class="btn btn-line" id="btnRefresh">↻ تحديث</button>
-      </div>
+      <div><h1>الطلبات</h1><div class="mut">يتم التحديث تلقائياً كل 10 ثوانٍ، وسيصدر تنبيه عند وصول طلب جديد</div></div>
+      <div class="acts"><button class="btn btn-line" id="btnRefresh">تحديث</button></div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="k">في الانتظار</div><div class="v" id="sWait">—</div></div>
-      <div class="stat"><div class="k">تمت اليوم</div><div class="v" id="sDone">—</div></div>
-      <div class="stat"><div class="k">إيراد اليوم</div><div class="v" id="sRev">—</div></div>
-      <div class="stat"><div class="k">متوسط الخدمة</div><div class="v" id="sAvg">—</div></div>
+      <div class="stat"><div class="k">طلبات جديدة</div><div class="v" id="sNew">—</div></div>
+      <div class="stat"><div class="k">طلبات اليوم</div><div class="v" id="sToday">—</div></div>
+      <div class="stat"><div class="k">مبيعات اليوم</div><div class="v" id="sRev">—</div></div>
+      <div class="stat"><div class="k">تم تسليمها اليوم</div><div class="v" id="sDone">—</div></div>
     </div>
-    <div class="board" id="board"></div>
-  </section>
-
-  <!-- HISTORY -->
-  <section class="tab-p" id="tab-history">
-    <div class="ph">
-      <div><h1>سجل الحجوزات</h1><div class="mut">اختر اليوم</div></div>
-      <div class="acts"><input type="date" id="histDate" class="btn btn-line" style="font-family:inherit"/><button class="btn btn-line" id="btnCsv">تصدير CSV</button></div>
+    <div class="fbar">
+      <div id="ordChips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      <input id="ordSearch" type="search" placeholder="بحث بالاسم أو الهاتف أو رقم الطلب"/>
     </div>
-    <div class="stats">
-      <div class="stat"><div class="k">إجمالي الحجوزات</div><div class="v" id="hTot">—</div></div>
-      <div class="stat"><div class="k">مكتملة</div><div class="v" id="hDone">—</div></div>
-      <div class="stat"><div class="k">ملغية / ما جاش</div><div class="v" id="hCan">—</div></div>
-      <div class="stat"><div class="k">الإيراد</div><div class="v" id="hRev">—</div></div>
-    </div>
-    <div class="tbl-w"><table class="tbl">
-      <thead><tr><th>#</th><th>العميل</th><th>الحلاق</th><th>الخدمة</th><th>المدة</th><th>السعر</th><th>الحالة</th></tr></thead>
-      <tbody id="histBody"></tbody></table></div>
+    <div class="olist" id="ordList"></div>
   </section>
 
-  <!-- BARBERS -->
-  <section class="tab-p" id="tab-barbers">
-    <div class="ph"><div><h1>الحلاقين</h1><div class="mut">الحلاقون الظاهرون للعملاء</div></div>
-      <button class="btn btn-gold" onclick="editItem('barbers')">+ حلاق جديد</button></div>
-    <div class="tbl-w"><table class="tbl"><thead><tr><th>الحلاق</th><th>ظاهر</th><th></th></tr></thead><tbody id="list-barbers"></tbody></table></div>
+  <!-- PRODUCTS -->
+  <section class="tab-p" id="tab-products">
+    <div class="ph"><div><h1>المنتجات</h1><div class="mut">«متاح» يعني يمكن طلبه الآن، و«ظاهر» يعني يظهر في صفحة العملاء</div></div>
+      <button class="btn btn-gold" onclick="editItem('products')">+ منتج جديد</button></div>
+    <div class="tbl-w" id="list-products"></div>
   </section>
 
-  <!-- SERVICES -->
-  <section class="tab-p" id="tab-services">
-    <div class="ph"><div><h1>الخدمات والأسعار</h1><div class="mut">حدد السعر والوقت التقديري لكل خدمة. الوقت يُستخدم في حساب مدة الانتظار.</div></div>
-      <button class="btn btn-gold" onclick="editItem('services')">+ خدمة جديدة</button></div>
-    <div class="tbl-w"><table class="tbl"><thead><tr><th>الخدمة</th><th>السعر</th><th>الوقت</th><th>ظاهرة</th><th></th></tr></thead><tbody id="list-services"></tbody></table></div>
+  <!-- CATEGORIES -->
+  <section class="tab-p" id="tab-categories">
+    <div class="ph"><div><h1>الأقسام</h1></div>
+      <button class="btn btn-gold" onclick="editItem('categories')">+ قسم جديد</button></div>
+    <div class="tbl-w" id="list-categories"></div>
   </section>
 
-  <!-- PACKAGES -->
-  <section class="tab-p" id="tab-packages">
-    <div class="ph"><div><h1>الباكدجات</h1><div class="mut">باكدجات العرسان والعروض الخاصة</div></div>
-      <button class="btn btn-gold" onclick="editItem('packages')">+ باكدج جديد</button></div>
-    <div class="tbl-w"><table class="tbl"><thead><tr><th>الباكدج</th><th>السعر</th><th>الوقت</th><th>ظاهر</th><th></th></tr></thead><tbody id="list-packages"></tbody></table></div>
-  </section>
-
-  <!-- GALLERY -->
-  <section class="tab-p" id="tab-gallery">
-    <div class="ph"><div><h1>Joo Barber Shop</h1><div class="mut">تظهر للعملاء أعلى صفحة الحجز</div></div>
-      <div class="acts"><button class="btn btn-gold" id="btnAddPhotos">إضافة صور</button><input type="file" id="galFile" accept="image/*" multiple hidden/></div></div>
-    <div class="gal-adm" id="galList"></div>
+  <!-- OFFERS -->
+  <section class="tab-p" id="tab-offers">
+    <div class="ph"><div><h1>العروض</h1><div class="mut">تظهر أعلى صفحة العملاء ويمكن إضافتها للسلة</div></div>
+      <button class="btn btn-gold" onclick="editItem('offers')">+ عرض جديد</button></div>
+    <div class="tbl-w" id="list-offers"></div>
   </section>
 
   <!-- SETTINGS -->
   <section class="tab-p" id="tab-settings">
     <div class="ph"><div><h1>الإعدادات</h1></div></div>
-    <div class="form" style="max-width:560px">
-      <div class="fg full"><label>اسم المحل</label><input id="setName"/></div>
-      <div class="fg full"><label>رقم واتساب (بصيغة دولية 20...)</label><input id="setWa" style="direction:ltr;text-align:right"/></div>
-      <div class="fg full"><label>أقصى عدد أشخاص في الحجز الواحد</label><input id="setMax" type="number" min="1" max="10"/></div>
-      <div class="fg full" style="flex-direction:row;align-items:center;gap:10px">
-        <input type="checkbox" class="tog" id="setAcc"/><label for="setAcc">استقبال الحجز عبر الموقع</label></div>
-      <div class="fg full"><button class="btn btn-gold" id="btnSaveSet">حفظ</button></div>
+    <div class="setbox">
+      <h3>المتجر</h3>
+      <div class="form">
+        <div class="fg"><label>اسم المتجر</label><input id="setName"/></div>
+        <div class="fg"><label>رقم واتساب (بصيغة دولية 20...)</label><input id="setWa" style="direction:ltr;text-align:right"/></div>
+      </div>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" class="tog" id="setAcc"/>استقبال الطلبات</label>
+
+      <h3>التوصيل</h3>
+      <div class="form">
+        <div class="fg"><label>مصاريف التوصيل (جنيه)</label><input id="setFee" type="number" min="0" step="any"/></div>
+        <div class="fg"><label>الحد الأدنى للطلب (0 = بدون)</label><input id="setMin" type="number" min="0" step="any"/></div>
+        <div class="fg full"><label>توصيل مجاني للطلبات أكبر من (0 = غير مفعّل)</label><input id="setFree" type="number" min="0" step="any"/></div>
+      </div>
+
+      <h3>الدفع</h3>
+      <label class="chk"><input type="checkbox" class="tog" id="setCash"/>الدفع نقداً عند الاستلام</label>
+      <label class="chk"><input type="checkbox" class="tog" id="setWallet"/>الدفع بالمحفظة الإلكترونية</label>
+      <div class="form" style="margin-top:8px">
+        <div class="fg"><label>اسم المحفظة</label><input id="setWName" placeholder="فودافون كاش"/></div>
+        <div class="fg"><label>رقم المحفظة</label><input id="setWNum" type="tel" style="direction:ltr;text-align:right"/></div>
+      </div>
+      <div class="mut" style="margin-top:6px">خيار المحفظة لا يظهر للعملاء إلا بعد كتابة رقم المحفظة.</div>
+      <button class="btn btn-gold" id="btnSaveSet" style="margin-top:16px">حفظ</button>
     </div>
   </section>
 </div>
 
-<!-- Item modal (generic) -->
+<!-- item modal (generic) -->
 <div class="mo" id="moItem"><div class="mo-box">
   <div class="mo-head"><h2 id="itemTitle"></h2><button class="mo-x" onclick="closeMo('moItem')">✕</button></div>
-  <div class="form" style="grid-template-columns:1fr;box-shadow:none;border:none;padding:0" id="itemFields"></div>
+  <div class="form" style="grid-template-columns:1fr" id="itemFields"></div>
   <div class="mo-foot"><button class="btn btn-line" onclick="closeMo('moItem')">إلغاء</button><button class="btn btn-gold" id="btnSaveItem">حفظ</button></div>
-</div></div>
-
-<!-- Walk-in modal -->
-<div class="mo" id="moWalk"><div class="mo-box">
-  <div class="mo-head"><h2>+ عميل في المحل</h2><button class="mo-x" onclick="closeMo('moWalk')">✕</button></div>
-  <div class="form" style="grid-template-columns:1fr;box-shadow:none;border:none;padding:0">
-    <div class="fg"><label>الاسم</label><input id="wName" placeholder="عميل بالمحل"/></div>
-    <div class="fg"><label>الهاتف (اختياري)</label><input id="wPhone" type="tel"/></div>
-    <div class="fg"><label>عدد الأشخاص</label><input id="wPeople" type="number" min="1" value="1"/></div>
-    <div class="fg"><label>الحلاق</label><select id="wBarber"></select></div>
-    <div class="fg"><label>الباكدج (اختياري)</label><select id="wPack"></select></div>
-    <div class="fg"><label>أو الخدمات</label><div class="chk-list" id="wServices"></div></div>
-  </div>
-  <div class="mo-foot"><button class="btn btn-line" onclick="closeMo('moWalk')">إلغاء</button><button class="btn btn-gold" id="btnSaveWalk">إضافة للطابور</button></div>
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
